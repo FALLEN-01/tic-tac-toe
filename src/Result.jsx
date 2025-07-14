@@ -2,16 +2,54 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom"; 
 
 export default function Result() {
-  // const navigate = useNavigate();       // Enable if routing from here
-  // const { gameId } = useParams();       // Enable if receiving route params
+  const navigate = useNavigate();
+  const { gameId } = useParams();
 
-  // const [state, setState] = useState(""); // Add your own state
-  // useEffect(() => { }, []);               // Add logic when component mounts
+  const handlePlayAgain = () => {
+    // Generate a new game ID for a fresh game
+    const newGameId = Math.random().toString(36).substr(2, 9);
+    navigate(`/game/${newGameId}`);
+  };
+
+  const handleGoHome = () => {
+    navigate('/');
+  };
 
   return (
     <div style={{ textAlign: "center", paddingTop: "50px" }}>
-      <h1>Result Page</h1>
-      {/* Add your JSX content here */}
+      <h1>Game Result</h1>
+      <p>Game ID: {gameId}</p>
+      <div style={{ marginTop: "30px" }}>
+        <button 
+          onClick={handlePlayAgain}
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            marginRight: "10px"
+          }}
+        >
+          Play Again
+        </button>
+        <button 
+          onClick={handleGoHome}
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            backgroundColor: "#008CBA",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer"
+          }}
+        >
+          Go Home
+        </button>
+      </div>
     </div>
   );
 }
