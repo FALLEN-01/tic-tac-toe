@@ -1,12 +1,17 @@
-// src/Home.jsx
-import React from "react";  // optional in React 17+ but safe to include
-import { useNavigate } from "react-router-dom"; // only if you need routing
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Home() {
+  // const navigate = useNavigate();       // Enable if routing from here
+  // const { gameId } = useParams();       // Enable if receiving route params
+
+  // const [state, setState] = useState(""); // Add your own state
+  // useEffect(() => { }, []);               // Add logic when component mounts
+
   return (
-    <div>
+    <div style={{ textAlign: "center", paddingTop: "50px" }}>
       <h1>Home Page</h1>
-      {/* Your content goes here */}
+      {/* Add your JSX content here */}
     </div>
   );
 }
