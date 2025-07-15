@@ -17,6 +17,7 @@ app.add_middleware(
     allow_origins=[
         "https://tic-tac-toe-umber-ten.vercel.app", 
         "http://127.0.0.1:5000",
+        "http://localhost:5000",
         "http://localhost:5173",
         "http://localhost:3000",
         "*"  # Allow all origins for development
@@ -106,3 +107,7 @@ def make_move(req: MoveRequest):
         mode=req.mode,
         move_history=move_history if req.mode == "decay" else []
     )
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -144,7 +144,6 @@ export default function Game() {
       setGameMode('api');
       await startNewGame();
     } catch (error) {
-      console.log('API unavailable, falling back to local AI:', error);
       setGameMode('local');
       setPlayerSymbol('X');
       resetGameState();
@@ -208,7 +207,6 @@ export default function Game() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   const startNewGame = async () => {
-  console.log('startNewGame called with API_BASE_URL:', API_BASE_URL);
   try {
     const response = await fetch(`${API_BASE_URL}/new_game`, {
       method: 'POST',
@@ -222,13 +220,11 @@ export default function Game() {
       }),
     });
 
-    console.log('API response status:', response.status);
     if (!response.ok) {
       throw new Error('Failed to start new game');
     }
 
     const gameData = await response.json();
-    console.log('Game data received:', gameData);
     setBoard(gameData.board);
     setCurrentPlayer(gameData.player_symbol);
     setPlayerSymbol(gameData.player_symbol);
@@ -334,7 +330,6 @@ export default function Game() {
   };
 
   // Show game board if game has started
-  console.log('Render - gameStarted:', gameStarted, 'selectedOpponent:', selectedOpponent, 'gameMode:', gameMode);
   if (gameStarted) {
     return (
       <div className="container">
