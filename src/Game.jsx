@@ -127,49 +127,9 @@ export default function Game() {
     if (!selectedOpponent) return;
     setGameStarted(true);
     
-    if (selectedOpponent === 'friends') {
-      // Always use local mode for friends
-      setGameMode('local');
-      setPlayerSymbol('X');
-      resetGame();
-    } else if (selectedOpponent === 'ai') {
-      // Try API first, fallback to local if unavailable
-      tryStartApiGame();
-    }
-  };
-
-  const tryStartApiGame = async () => {
-    try {
-      const response = await fetch(`${API_URL}/start_game`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          player_symbol: 'X',
-          difficulty: currentDifficulty,
-          mode: 'regular'
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setGameId(data.game_id);
-        setPlayerSymbol(data.player_symbol);
-        setGameMode('api');
-        startNewGame();
-      } else {
-        // Fallback to local AI
-        console.log('API unavailable, falling back to local AI');
-        setGameMode('local');
-        setPlayerSymbol('X');
-        resetGame();
-      }
-    } catch (error) {
-      console.log('API unavailable, falling back to local AI:', error);
-      setGameMode('local');
-      setPlayerSymbol('X');
-      resetGame();
+    // Only AI games are supported now
+    if (selectedOpponent === 'ai') {
+      startNewGame();
     }
   };
 
@@ -182,6 +142,7 @@ export default function Game() {
     } else if (gameMode === 'local') {
       makeLocalMove(index);
     }
+    makeMove(index);
   };
 
   // Reset game
@@ -228,118 +189,99 @@ export default function Game() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
   const startNewGame = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/new_game`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          mode: mode,
-          ai_mode: selectedOpponent === 'ai',
-          depth: currentDifficulty
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to start new game: ${response.status} ${errorText}`);
-      }
-      
-      const gameData = await response.json();
-      
-      setBoard(gameData.board);
-      setCurrentPlayer(gameData.player_symbol);
-      setPlayerSymbol(gameData.player_symbol);
-      setMoveHistory(gameData.move_history || []);
-      
-      // Use API response directly for game status
-      if (gameData.result === 'in_progress') {
-        setGameStatus('playing');
-        setWinner(null);
-        setWinningCells([]);
-      } else if (gameData.result === 'draw') {
-        setGameStatus('draw');
-        setWinner('draw');
-        setWinningCells([]);
-      } else {
-        // gameData.result contains the winner ('X' or 'O')
-        setGameStatus('won');
-        setWinner(gameData.result);
-        setWinningCells([]); // API doesn't provide winning cells, but we don't need them
-      }
-      
-      // If AI made the first move, update the turn
-      if (!gameData.your_turn && selectedOpponent === 'ai') {
-        setIsAiTurn(false);
-      }
-      
-    } catch (error) {
-      console.error('Error starting new game:', error);
-      alert('Backend server not available. Please try again.');
+  try {
+    const response = await fetch(`${API_BASE_URL}/new_game`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        mode: mode,  // 'classic' or 'decay' from URL param
+        ai_mode: selectedOpponent === 'ai',
+        depth: currentDifficulty  // 1-5 depending on slider
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to start new game');
     }
-  };
+
+    const gameData = await response.json();
+    setBoard(gameData.board);
+    setCurrentPlayer(gameData.player_symbol);
+    setPlayerSymbol(gameData.player_symbol);
+    setMoveHistory(gameData.move_history || []);
+
+    if (gameData.result === 'in_progress') {
+      setGameStatus('playing');
+    } else if (gameData.result === 'draw') {
+      setGameStatus('draw');
+      setWinner('draw');
+    } else {
+      setGameStatus('won');
+      setWinner(gameData.result);
+    }
+
+    if (!gameData.your_turn && selectedOpponent === 'ai') {
+      setIsAiTurn(false);
+    }
+
+  } catch (error) {
+    console.error('Error starting new game:', error);
+    alert('Backend server not available. Playing in local mode.');
+  }
+};
 
   const makeMove = async (index) => {
-    try {
-      setIsAiTurn(true);
-      
-      const response = await fetch(`${API_BASE_URL}/make_move`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          board: board,
-          player_move: index,
-          player_symbol: currentPlayer,
-          ai_enabled: selectedOpponent === 'ai',
-          depth: currentDifficulty,
-          mode: mode,
-          move_history: moveHistory
-        }),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to make move');
-      }
-      
-      const gameData = await response.json();
-      setBoard(gameData.board);
-      setMoveHistory(gameData.move_history || []);
-      
-      // Use API response directly for game status
-      if (gameData.result === 'in_progress') {
-        setGameStatus('playing');
-        setWinner(null);
-        setWinningCells([]);
-        // Update current player for next turn
-        setCurrentPlayer(gameData.player_symbol);
-      } else if (gameData.result === 'draw') {
-        setGameStatus('draw');
-        setWinner('draw');
-        setWinningCells([]);
-      } else {
-        // gameData.result contains the winner ('X' or 'O')
-        setGameStatus('won');
-        setWinner(gameData.result);
-        setWinningCells([]); // API handles winner detection
-      }
-      
-      setIsAiTurn(false);
-      
-    } catch (error) {
-      console.error('Error making move:', error);
-      setIsAiTurn(false);
-      alert('Error making move. Please try again.');
-    }
-  };
+  try {
+    setIsAiTurn(true);
 
-  // Helper functions for game display
+    const response = await fetch(`${API_BASE_URL}/make_move`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        board: board,
+        player_move: index,
+        player_symbol: currentPlayer,
+        ai_enabled: selectedOpponent === 'ai',
+        depth: currentDifficulty,
+        mode: mode,
+        move_history: moveHistory
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to make move');
+    }
+
+    const gameData = await response.json();
+    setBoard(gameData.board);
+    setMoveHistory(gameData.move_history || []);
+
+    if (gameData.result === 'in_progress') {
+      setGameStatus('playing');
+    } else if (gameData.result === 'draw') {
+      setGameStatus('draw');
+      setWinner('draw');
+    } else {
+      setGameStatus('won');
+      setWinner(gameData.result);
+    }
+
+    setIsAiTurn(!gameData.your_turn);
+
+  } catch (error) {
+    console.error('Error making move:', error);
+    setIsAiTurn(false);
+  }
+};
+
   const getStatusMessage = () => {
     if (gameStatus === 'won') {
       if (selectedOpponent === 'ai') {
-        // Check if the winner is the player's symbol or not
+        
         return winner === playerSymbol ? '🎉 You Won!' : '🤖 AI Won!';
       } else {
         // Local multiplayer
