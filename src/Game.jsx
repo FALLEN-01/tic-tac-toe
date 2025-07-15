@@ -315,25 +315,6 @@ export default function Game() {
             </div>
           </div>
 
-          {/* Game Over Overlay */}
-          {gameStatus !== 'playing' && (
-            <div className="game-over-overlay">
-              <div className="game-over-content">
-                <div className="game-over-message">
-                  {getStatusMessage()}
-                </div>
-                <div className="game-over-buttons">
-                  <button className="btn btn-play-again" onClick={resetGame}>
-                    🔄 Play Again
-                  </button>
-                  <button className="btn btn-results" onClick={goToResults}>
-                    📊 View Results
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Action Buttons */}
           <div className="action-buttons">
             <button className="btn btn-back" onClick={goBackToSelection}>
@@ -349,6 +330,25 @@ export default function Game() {
             )}
           </div>
         </div>
+
+        {/* Game Over Overlay - Moved outside main-card */}
+        {gameStatus !== 'playing' && (
+          <div className="game-over-overlay">
+            <div className="game-over-content">
+              <div className="game-over-message">
+                {getStatusMessage()}
+              </div>
+              <div className="game-over-buttons">
+                <button className="btn btn-play-again" onClick={resetGame}>
+                  🔄 Play Again
+                </button>
+                <button className="btn btn-results" onClick={goToResults}>
+                  📊 View Results
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -388,7 +388,7 @@ export default function Game() {
           </div>
 
           {/* AI Option */}
-          <div className="opponent-card ai-card">
+          <div className="opponent-card">
             <button 
               className={`opponent-button ${selectedOpponent === 'ai' ? 'selected' : ''}`}
               onClick={() => selectOpponent('ai')}
@@ -401,48 +401,50 @@ export default function Game() {
                 </div>
               </div>
             </button>
-
-            {/* AI Difficulty Slider */}
-            <div className={`difficulty-slider ${selectedOpponent !== 'ai' ? 'hidden' : ''}`}>
-              <div className="difficulty-display">
-                <span className="difficulty-label">Difficulty:</span>
-                <span 
-                  className={`difficulty-name ${difficultyColors[currentDifficulty]}`}
-                >
-                  {difficultyNames[currentDifficulty]}
-                </span>
-              </div>
-              
-              <div className="slider-container">
-                <div className="slider-track">
-                  <div 
-                    className={`slider-progress ${difficultyColors[currentDifficulty]}`}
-                    style={{ width: `${((currentDifficulty - 1) / 4) * 100}%` }}
-                  ></div>
-                </div>
-                <input 
-                  type="range" 
-                  min="1" 
-                  max="5" 
-                  value={currentDifficulty}
-                  className="slider-input"
-                  onChange={(e) => updateDifficulty(e.target.value)}
-                />
-              </div>
-              
-              <div className="difficulty-labels">
-                {difficultyNames.slice(1).map((name, index) => (
-                  <span 
-                    key={index + 1}
-                    className={`label ${currentDifficulty === index + 1 ? `active ${difficultyColors[index + 1]}` : ''}`}
-                  >
-                    {name}
-                  </span>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
+
+        {/* AI Difficulty Slider - Full Width */}
+        {selectedOpponent === 'ai' && (
+          <div className="difficulty-slider-container">
+            <div className="difficulty-display">
+              <span className="difficulty-label">Difficulty:</span>
+              <span 
+                className={`difficulty-name ${difficultyColors[currentDifficulty]}`}
+              >
+                {difficultyNames[currentDifficulty]}
+              </span>
+            </div>
+            
+            <div className="slider-container">
+              <div className="slider-track">
+                <div 
+                  className={`slider-progress ${difficultyColors[currentDifficulty]}`}
+                  style={{ width: `${((currentDifficulty - 1) / 4) * 100}%` }}
+                ></div>
+              </div>
+              <input 
+                type="range" 
+                min="1" 
+                max="5" 
+                value={currentDifficulty}
+                className="slider-input"
+                onChange={(e) => updateDifficulty(e.target.value)}
+              />
+            </div>
+            
+            <div className="difficulty-labels">
+              {difficultyNames.slice(1).map((name, index) => (
+                <span 
+                  key={index + 1}
+                  className={`label ${currentDifficulty === index + 1 ? `active ${difficultyColors[index + 1]}` : ''}`}
+                >
+                  {name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <button className="back-button" onClick={goBack}>← BACK</button>
