@@ -121,23 +121,22 @@ export default function Game() {
           depth: currentDifficulty
         }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to start new game');
       }
-      
+
       const gameData = await response.json();
       setBoard(gameData.board);
       setCurrentPlayer(gameData.player_symbol);
-      setPlayerSymbol(gameData.player_symbol); // Store the player's assigned symbol
-      
+      setPlayerSymbol(gameData.player_symbol);
+
       if (gameData.result === 'in_progress') {
         setGameStatus('playing');
       } else if (gameData.result === 'draw') {
         setGameStatus('draw');
         setWinner('draw');
       } else {
-        // gameData.result contains the winner ('X' or 'O')
         setGameStatus('won');
         setWinner(gameData.result);
         const winResult = checkWinner(gameData.board);
@@ -145,18 +144,16 @@ export default function Game() {
           setWinningCells(winResult.winningCells);
         }
       }
-      
-      // If AI made the first move, update the turn
-      if (!gameData.your_turn && selectedOpponent === 'ai') {
-        setIsAiTurn(false);
-      }
-      
-    } catch (error) {
-      console.error('Error starting new game:', error);
-      // Fallback to local game if API is not available
-      alert('Backend server not available. Playing in local mode.');
+
+    if (!gameData.your_turn && selectedOpponent === 'ai') {
+      setIsAiTurn(false);
     }
-  };
+
+  } catch (error) {
+    console.error('Error starting new game:', error);
+    alert('Backend server not available. Playing in local mode.');
+  }
+};
 
   const makeMove = async (index) => {
     if (selectedOpponent !== 'ai') {
