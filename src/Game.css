@@ -22,20 +22,21 @@ body {
   align-items: center;
   width: 100vw;
   min-height: 100vh;
+  padding: 20px 0;
 }
 
 /* Main Card */
 .main-card {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   background: transparent;
   border: none;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 20px;
 }
 
 /* Title */
@@ -747,6 +748,7 @@ body {
 @media (max-width: 768px) {
   .main-title {
     font-size: 3rem;
+    margin-bottom: 2rem;
   }
   
   .game-board {
@@ -765,7 +767,9 @@ body {
     flex-direction: column;
     gap: 20px;
     width: min(80vw, 300px);
-    top: 20vh;
+    top: 15vh;
+    position: relative;
+    margin-bottom: 2rem;
   }
   
   .opponent-card {
@@ -788,9 +792,11 @@ body {
   }
   
   .difficulty-slider-container {
-    top: 50vh;
+    position: relative;
+    top: auto;
     width: min(80vw, 300px);
     padding: 1.5rem;
+    margin-bottom: 2rem;
   }
   
   .game-info-integrated {
@@ -808,11 +814,20 @@ body {
   .action-buttons {
     flex-direction: column;
     gap: 12px;
+    margin-top: 2rem;
   }
   
   .btn {
     min-width: 120px;
     font-size: 1rem;
+  }
+  
+  .back-button, .start-button {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    margin: 0.5rem;
   }
   
   .game-over-content {
@@ -831,6 +846,7 @@ body {
 @media (max-width: 480px) {
   .main-title {
     font-size: 2.5rem;
+    margin-bottom: 1.5rem;
   }
   
   .game-board {
@@ -843,6 +859,17 @@ body {
   .cell {
     font-size: 2.5rem;
     border-radius: 6px;
+  }
+  
+  .opponent-cards-container {
+    width: min(90vw, 280px);
+    margin-bottom: 1.5rem;
+  }
+  
+  .difficulty-slider-container {
+    width: min(90vw, 280px);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
   }
   
   .game-over-buttons {
