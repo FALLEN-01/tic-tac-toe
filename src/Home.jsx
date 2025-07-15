@@ -69,7 +69,6 @@ export default function Home() {
                 <div className="game-content">
                   <div className="game-icon red-icon">⭕</div>
                   <h2 className="game-title">Tic Tac Toe</h2>
-                  <p className="game-description">The classic game you know and love. Simple rules, timeless fun.</p>
                 </div>
               </button>
             </div>
@@ -80,7 +79,6 @@ export default function Home() {
                 <div className="game-content">
                   <div className="game-icon yellow-icon">😵</div>
                   <h2 className="game-title">Decay Tac Toe</h2>
-                  <p className="game-description">Pieces disappear over time! Plan your moves carefully before they fade away.</p>
                 </div>
               </button>
             </div>
@@ -91,14 +89,13 @@ export default function Home() {
                 <div className="game-content">
                   <div className="game-icon star-icon">⭐</div>
                   <h2 className="game-title">Ultimate Tic Tac Toe</h2>
-                  <p className="game-description">The ultimate challenge with multiple grids and advanced mechanics.</p>
                 </div>
               </button>
             </div>
           </div>
           
           {/* Back Button */}
-          <button className="back-button" onClick={goBackToHome}>← BACK</button>
+          <button className="btn btn-back" onClick={goBackToHome}>← BACK</button>
         </div>
         
         {/* Coming Soon Overlay */}
