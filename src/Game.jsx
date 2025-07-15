@@ -99,7 +99,7 @@ export default function Game() {
   };
 
   // API calls to FastAPI backend
-  const API_BASE_URL = 'http://localhost:8000'; // Adjust this to your FastAPI server URL
+  const API_BASE_URL = 'https://tictactoe-backend-e24r.onrender.com'; // Adjust this to your FastAPI server URL
 
   const startNewGame = async () => {
     try {

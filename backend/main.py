@@ -10,7 +10,7 @@ app = FastAPI()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5000", "http://127.0.0.1:5000"],  # Frontend URL
+    allow_origins=["https://tic-tac-toe-umber-ten.vercel.app/", "http://127.0.0.1:5000"],  # Frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -36,7 +36,7 @@ def new_game(req: NewGameRequest):
         board = board,
         ai_move = ai_move,
         result = result,
-        depth = req.depth,
+        depth = req.depth or 5,
         ai_enabled = req.ai_mode,
         mode = req.mode
     )
