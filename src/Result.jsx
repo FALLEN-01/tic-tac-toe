@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom"; 
+import React from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import "./Result.css";
 
 export default function Result() {
   const navigate = useNavigate();
   const { gameId } = useParams();
+  const [searchParams] = useSearchParams();
+  const winner = searchParams.get('winner');
+  const result = searchParams.get('result');
 
   const handlePlayAgain = () => {
     // Generate a new game ID for a fresh game
@@ -15,39 +19,58 @@ export default function Result() {
     navigate('/');
   };
 
+  const getResultDisplay = () => {
+    if (winner) {
+      return {
+        emoji: winner === 'X' ? '❌' : '⭕',
+        title: `Player ${winner} Wins!`,
+        subtitle: '🎉 Congratulations! 🎉',
+        celebration: true
+      };
+    } else if (result === 'draw') {
+      return {
+        emoji: '🤝',
+        title: "It's a Draw!",
+        subtitle: '🎯 Great game! Try again!',
+        celebration: false
+      };
+    } else {
+      return {
+        emoji: '🎮',
+        title: 'Game Complete!',
+        subtitle: '✨ Thanks for playing! ✨',
+        celebration: false
+      };
+    }
+  };
+
+  const resultDisplay = getResultDisplay();
+
   return (
-    <div style={{ textAlign: "center", paddingTop: "50px" }}>
-      <h1>Game Result</h1>
-      <p>Game ID: {gameId}</p>
-      <div style={{ marginTop: "30px" }}>
+    <div className="result-container">
+      <div className={`result-emoji ${resultDisplay.celebration ? 'celebrate' : ''}`}>
+        {resultDisplay.emoji}
+      </div>
+      
+      <h1 className="result-title">{resultDisplay.title}</h1>
+      <p className="result-subtitle">{resultDisplay.subtitle}</p>
+      
+      <div className="game-id">
+        🎯 Game ID: {gameId}
+      </div>
+      
+      <div className="button-container">
         <button 
           onClick={handlePlayAgain}
-          style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            backgroundColor: "#4CAF50",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            marginRight: "10px"
-          }}
+          className="result-button play-again"
         >
-          Play Again
+          🔄 Play Again
         </button>
         <button 
           onClick={handleGoHome}
-          style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            backgroundColor: "#008CBA",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer"
-          }}
+          className="result-button go-home"
         >
-          Go Home
+          🏠 Go Home
         </button>
       </div>
     </div>
