@@ -208,6 +208,7 @@ export default function Game() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   const startNewGame = async () => {
+  console.log('startNewGame called with API_BASE_URL:', API_BASE_URL);
   try {
     const response = await fetch(`${API_BASE_URL}/new_game`, {
       method: 'POST',
@@ -221,17 +222,19 @@ export default function Game() {
       }),
     });
 
+    console.log('API response status:', response.status);
     if (!response.ok) {
       throw new Error('Failed to start new game');
     }
 
     const gameData = await response.json();
+    console.log('Game data received:', gameData);
     setBoard(gameData.board);
     setCurrentPlayer(gameData.player_symbol);
     setPlayerSymbol(gameData.player_symbol);
     setMoveHistory(gameData.move_history || []);
 
-    if (gameData.result === 'in_progress') {
+    if (gameData.result === 'in progress' || gameData.result === 'in_progress') {
       setGameStatus('playing');
     } else if (gameData.result === 'draw') {
       setGameStatus('draw');
@@ -242,6 +245,8 @@ export default function Game() {
     }
 
     if (!gameData.your_turn && selectedOpponent === 'ai') {
+      setIsAiTurn(true);
+    } else {
       setIsAiTurn(false);
     }
 
@@ -279,7 +284,7 @@ export default function Game() {
     setBoard(gameData.board);
     setMoveHistory(gameData.move_history || []);
 
-    if (gameData.result === 'in_progress') {
+    if (gameData.result === 'in progress' || gameData.result === 'in_progress') {
       setGameStatus('playing');
     } else if (gameData.result === 'draw') {
       setGameStatus('draw');
@@ -329,6 +334,7 @@ export default function Game() {
   };
 
   // Show game board if game has started
+  console.log('Render - gameStarted:', gameStarted, 'selectedOpponent:', selectedOpponent, 'gameMode:', gameMode);
   if (gameStarted) {
     return (
       <div className="container">
@@ -397,9 +403,8 @@ export default function Game() {
               </button>
             )}
           </div>
-        </div>
 
-        {/* Game Over Overlay - Moved outside main-card */}
+        {/* Game Over Overlay - Inside main-card for proper positioning */}
         {gameStatus !== 'playing' && (
           <div className="game-over-overlay">
             <div className="game-over-content">
@@ -417,6 +422,7 @@ export default function Game() {
             </div>
           </div>
         )}
+        </div>
       </div>
     );
   }
