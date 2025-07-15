@@ -1,10 +1,10 @@
+from pydantic import BaseModel
 from typing import List, Optional
-from pydantic import BaseModel # type: ignore
 
 class NewGameRequest(BaseModel):
-    mode: str
     ai_mode: bool
     depth: Optional[int] = 5
+    mode: str = "regular"
 
 class NewGameResponse(BaseModel):
     player_symbol: str
@@ -14,13 +14,14 @@ class NewGameResponse(BaseModel):
     result: str
     depth: int
     ai_enabled: bool
-    mode: str
-
+    mode: str = "regular"
+    move_history: List[int] = []
 
 class MoveRequest(BaseModel):
     board: List[str]
     player_move: int
     player_symbol: str
-    ai_enabled: bool
     depth: int
-    mode: str
+    ai_enabled: bool
+    mode: str = "regular"
+    move_history: List[int] = []

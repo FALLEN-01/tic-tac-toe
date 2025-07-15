@@ -8,10 +8,11 @@ export default function Game() {
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode') || 'classic';
   
-  // Game selection state
+  // Game selection state - mode comes from URL, only need opponent selection
   const [selectedOpponent, setSelectedOpponent] = useState(null);
   const [currentDifficulty, setCurrentDifficulty] = useState(3);
   const [gameStarted, setGameStarted] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(false);
   
   // Game state
   const [board, setBoard] = useState(Array(9).fill(''));
@@ -21,12 +22,21 @@ export default function Game() {
   const [winner, setWinner] = useState(null);
   const [winningCells, setWinningCells] = useState([]);
   const [isAiTurn, setIsAiTurn] = useState(false);
+  const [moveHistory, setMoveHistory] = useState([]);
 
   const difficultyNames = ['', 'Very Easy', 'Easy', 'Medium', 'Hard', 'Expert'];
   const difficultyColors = ['', 'blue', 'green', 'orange', 'red', 'purple'];
 
   const selectOpponent = (opponent) => {
     setSelectedOpponent(opponent);
+  };
+
+  const handleComingSoon = () => {
+    setShowComingSoon(true);
+  };
+
+  const closeComingSoon = () => {
+    setShowComingSoon(false);
   };
 
   const updateDifficulty = (value) => {
@@ -45,6 +55,11 @@ export default function Game() {
   // Handle cell click in game
   const handleCellClick = (index) => {
     if (board[index] !== '' || gameStatus !== 'playing' || isAiTurn) return;
+
+    // Only AI games are supported
+    if (selectedOpponent === 'ai') {
+      makeMove(index);
+    }
     makeMove(index);
   };
 
@@ -52,12 +67,14 @@ export default function Game() {
   const resetGame = () => {
     setBoard(Array(9).fill(''));
     setCurrentPlayer('X');
-    setPlayerSymbol('');
+    setPlayerSymbol('X');
     setGameStatus('playing');
     setWinner(null);
     setWinningCells([]);
     setIsAiTurn(false);
+    setMoveHistory([]);
     
+    // Only AI games are supported
     if (selectedOpponent === 'ai') {
       startNewGame();
     }
@@ -66,7 +83,14 @@ export default function Game() {
   // Go back to opponent selection
   const goBackToSelection = () => {
     setGameStarted(false);
-    resetGame();
+    setBoard(Array(9).fill(''));
+    setCurrentPlayer('X');
+    setPlayerSymbol('');
+    setGameStatus('playing');
+    setWinner(null);
+    setWinningCells([]);
+    setIsAiTurn(false);
+    setMoveHistory([]);
   };
 
   const goBack = () => {
@@ -80,7 +104,7 @@ export default function Game() {
   };
 
   // API calls to FastAPI backend
-  const API_BASE_URL = 'https://tictactoe-backend-e24r.onrender.com'; // Adjust this to your FastAPI server URL
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
   const startNewGame = async () => {
   try {
@@ -177,8 +201,10 @@ export default function Game() {
       if (selectedOpponent === 'ai') {
         
         return winner === playerSymbol ? '🎉 You Won!' : '🤖 AI Won!';
+      } else {
+        // Local multiplayer
+        return `🎉 Player ${winner} Won!`;
       }
-      return `🎉 Player ${winner} Won!`;
     }
     if (gameStatus === 'draw') {
       return "🤝 It's a Draw!";
@@ -289,7 +315,7 @@ export default function Game() {
     );
   }
 
-  // Show opponent selection
+  // Show game setup
   return (
     <div className="container">
       {/* Main Card Container */}
@@ -297,6 +323,9 @@ export default function Game() {
         {/* Title */}
         <div className="title-container">
           <h1 className="main-title">Choose Your Opponent</h1>
+          <p className="game-mode-display">
+            Playing: <span className="selected-mode">{mode === 'classic' ? 'Tic Tac Toe' : mode === 'decay' ? 'Decay Tac Toe' : 'Tic Tac Toe'}</span>
+          </p>
         </div>
 
         {/* Decorative Elements */}
@@ -305,79 +334,82 @@ export default function Game() {
         <div className="decorative-x decorative-x-2">X</div>
         <div className="decorative-o decorative-o-2">O</div>
 
-        {/* Opponent Selection Cards */}
-        <div className="opponent-cards-container">
-          {/* Friends Option */}
-          <div className="opponent-card">
-            <button 
-              className={`opponent-button ${selectedOpponent === 'friends' ? 'selected' : ''}`}
-              onClick={() => selectOpponent('friends')}
-            >
-              <div className="opponent-content">
-                <div className="opponent-icon">👥</div>
-                <div className="opponent-text">
-                  <h2 className="opponent-title">Play with Friend</h2>
-                  <p className="opponent-description">Challenge a friend in local multiplayer. Take turns and see who's the ultimate strategist!</p>
+        {/* Opponent Selection */}
+        <div className="selection-section">
+          <div className="option-cards-container">
+            <div className="option-card">
+              <button 
+                className="option-button"
+                onClick={handleComingSoon}
+              >
+                <div className="option-content">
+                  <div className="option-icon">👥</div>
+                  <div className="option-text">
+                    <h3 className="option-title">Play with Friend</h3>
+                    <p className="option-description">Local multiplayer</p>
+                  </div>
                 </div>
-              </div>
-            </button>
-          </div>
+              </button>
+            </div>
 
-          {/* AI Option */}
-          <div className="opponent-card">
-            <button 
-              className={`opponent-button ${selectedOpponent === 'ai' ? 'selected' : ''}`}
-              onClick={() => selectOpponent('ai')}
-            >
-              <div className="opponent-content">
-                <div className="opponent-icon">🤖</div>
-                <div className="opponent-text">
-                  <h2 className="opponent-title">Play with AI</h2>
-                  <p className="opponent-description">Test your skills against our intelligent AI opponent. Choose your difficulty level!</p>
+            <div className="option-card">
+              <button 
+                className={`option-button ${selectedOpponent === 'ai' ? 'selected' : ''}`}
+                onClick={() => selectOpponent('ai')}
+              >
+                <div className="option-content">
+                  <div className="option-icon">🤖</div>
+                  <div className="option-text">
+                    <h3 className="option-title">Play with AI</h3>
+                    <p className="option-description">Challenge the computer</p>
+                  </div>
                 </div>
-              </div>
-            </button>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* AI Difficulty Slider - Full Width */}
+        {/* AI Difficulty Slider */}
         {selectedOpponent === 'ai' && (
-          <div className="difficulty-slider-container">
-            <div className="difficulty-display">
-              <span className="difficulty-label">Difficulty:</span>
-              <span 
-                className={`difficulty-name ${difficultyColors[currentDifficulty]}`}
-              >
-                {difficultyNames[currentDifficulty]}
-              </span>
-            </div>
-            
-            <div className="slider-container">
-              <div className="slider-track">
-                <div 
-                  className={`slider-progress ${difficultyColors[currentDifficulty]}`}
-                  style={{ width: `${((currentDifficulty - 1) / 4) * 100}%` }}
-                ></div>
-              </div>
-              <input 
-                type="range" 
-                min="1" 
-                max="5" 
-                value={currentDifficulty}
-                className="slider-input"
-                onChange={(e) => updateDifficulty(e.target.value)}
-              />
-            </div>
-            
-            <div className="difficulty-labels">
-              {difficultyNames.slice(1).map((name, index) => (
+          <div className="selection-section">
+            <h2 className="section-title">AI Difficulty</h2>
+            <div className="difficulty-slider-container">
+              <div className="difficulty-display">
+                <span className="difficulty-label">Level:</span>
                 <span 
-                  key={index + 1}
-                  className={`label ${currentDifficulty === index + 1 ? `active ${difficultyColors[index + 1]}` : ''}`}
+                  className={`difficulty-name ${difficultyColors[currentDifficulty]}`}
                 >
-                  {name}
+                  {difficultyNames[currentDifficulty]}
                 </span>
-              ))}
+              </div>
+              
+              <div className="slider-container">
+                <div className="slider-track">
+                  <div 
+                    className={`slider-progress ${difficultyColors[currentDifficulty]}`}
+                    style={{ width: `${((currentDifficulty - 1) / 4) * 100}%` }}
+                  ></div>
+                </div>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="5" 
+                  value={currentDifficulty}
+                  className="slider-input"
+                  onChange={(e) => updateDifficulty(e.target.value)}
+                />
+              </div>
+              
+              <div className="difficulty-labels">
+                {difficultyNames.slice(1).map((name, index) => (
+                  <span 
+                    key={index + 1}
+                    className={`label ${currentDifficulty === index + 1 ? `active ${difficultyColors[index + 1]}` : ''}`}
+                  >
+                    {name}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -392,6 +424,17 @@ export default function Game() {
           START GAME →
         </button>
       </div>
+
+      {/* Coming Soon Modal */}
+      {showComingSoon && (
+        <div className="game-over-overlay">
+          <div className="overlay-content">
+            <h2 className="overlay-title">Coming Soon</h2>
+            <p className="overlay-text">Local multiplayer is still in development. Stay tuned for this exciting feature!</p>
+            <button className="btn btn-primary" onClick={closeComingSoon}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
