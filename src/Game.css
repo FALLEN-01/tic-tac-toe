@@ -863,6 +863,7 @@ body {
 }
 
 .option-description {
+  font-family: 'Annie Use Your Telescope', Helvetica;
   font-size: clamp(0.8rem, 2vw, 1rem);
   opacity: 0.8;
   margin: 0;
