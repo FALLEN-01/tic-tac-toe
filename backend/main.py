@@ -1,4 +1,4 @@
-from fastapi import FastAPI # type: ignore
+from fastapi import FastAPI, HTTPException # type: ignore
 from fastapi.middleware.cors import CORSMiddleware # type: ignore
 import random
 from models import *
@@ -6,6 +6,10 @@ from game.util import *
 
 
 app = FastAPI()
+
+@app.get("/")
+def read_root():
+    return {"message": "Tic Tac Toe API is running!", "status": "ok"}
 
 # Add CORS middleware
 app.add_middleware(
@@ -32,36 +36,40 @@ def new_game(req: NewGameRequest):
     if not your_turn and req.ai_mode:
         depth = req.depth if req.depth is not None else 5
         ai_move = best_move(board, "X", depth, turn=True)
-        board[ai_move] = "X"
+        if ai_move is not None and ai_move != -1:
+            board[ai_move] = "X"
         
     result = check_winner(board)
     if result is None:
         result = "in_progress"
     
-    return NewGameResponse(
-        player_symbol = player_symbol,
-        your_turn = your_turn,
-        board = board,
-        ai_move = ai_move,
-        result = result,
-        depth = req.depth or 5,
-        ai_enabled = req.ai_mode,
-        mode = req.mode
+    response = NewGameResponse(
+        player_symbol=player_symbol,
+        your_turn=your_turn,
+        board=board,
+        ai_move=ai_move,
+        result=result,
+        depth=req.depth or 5,
+        ai_enabled=req.ai_mode,
+        mode=req.mode
     )
+    
+    print(f"New game response: {response}")  # Debug log
+    return response
         
 
 @app.post("/make_move", response_model=NewGameResponse)
 def make_move(req: MoveRequest):
-    board = req.board
+    board = req.board[:]  # Create a copy to avoid modifying the original
     if board[req.player_move] != "":
-        return {"error": "invalid move"}
+        raise HTTPException(status_code=400, detail="Invalid move: Cell already occupied")
     
     board[req.player_move] = req.player_symbol
     result = check_winner(board)
     ai_move = None
     
     if result is None and req.ai_enabled:
-        ai_symbol = "O" if req.player_symbol=="X" else "X"
+        ai_symbol = "O" if req.player_symbol == "X" else "X"
         ai_move = best_move(board, ai_symbol, req.depth, True)
         if ai_move != -1:
             board[ai_move] = ai_symbol
@@ -70,15 +78,14 @@ def make_move(req: MoveRequest):
     if result is None:
         result = "in_progress"
         
-        
     return NewGameResponse(
-        player_symbol = req.player_symbol,
-        your_turn = ((result == "in_progress")),
-        board = board,
-        ai_move = ai_move,
-        result = result,
-        depth = req.depth,
-        ai_enabled = req.ai_enabled,
-        mode = req.mode
+        player_symbol=req.player_symbol,
+        your_turn=(result == "in_progress"),
+        board=board,
+        ai_move=ai_move,
+        result=result,
+        depth=req.depth,
+        ai_enabled=req.ai_enabled,
+        mode=req.mode
     )
         

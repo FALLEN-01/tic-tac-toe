@@ -123,17 +123,22 @@ export default function Game() {
       });
       
       if (!response.ok) {
-        throw new Error('Failed to start new game');
+        const errorText = await response.text();
+        throw new Error(`Failed to start new game: ${response.status} ${errorText}`);
       }
       
       const gameData = await response.json();
+      
       setBoard(gameData.board);
       setCurrentPlayer(gameData.player_symbol);
       setPlayerSymbol(gameData.player_symbol); // Store the player's assigned symbol
       
-      if (gameData.result === 'in_progress') {
+      // Handle both "in_progress" and "in progress" formats
+      const normalizedResult = gameData.result.replace(/\s+/g, '_');
+      
+      if (normalizedResult === 'in_progress') {
         setGameStatus('playing');
-      } else if (gameData.result === 'draw') {
+      } else if (normalizedResult === 'draw') {
         setGameStatus('draw');
         setWinner('draw');
       } else {
@@ -190,9 +195,12 @@ export default function Game() {
       const gameData = await response.json();
       setBoard(gameData.board);
       
-      if (gameData.result === 'in_progress') {
+      // Handle both "in_progress" and "in progress" formats
+      const normalizedResult = gameData.result.replace(/\s+/g, '_');
+      
+      if (normalizedResult === 'in_progress') {
         setGameStatus('playing');
-      } else if (gameData.result === 'draw') {
+      } else if (normalizedResult === 'draw') {
         setGameStatus('draw');
         setWinner('draw');
       } else {
