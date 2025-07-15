@@ -16,6 +16,7 @@ export default function Game() {
   // Game state
   const [board, setBoard] = useState(Array(9).fill(''));
   const [currentPlayer, setCurrentPlayer] = useState('X');
+  const [playerSymbol, setPlayerSymbol] = useState('');
   const [gameStatus, setGameStatus] = useState('playing'); // 'playing', 'won', 'draw'
   const [winner, setWinner] = useState(null);
   const [winningCells, setWinningCells] = useState([]);
@@ -54,10 +55,16 @@ export default function Game() {
   const resetGame = () => {
     setBoard(Array(9).fill(''));
     setCurrentPlayer('X');
+    setPlayerSymbol('');
     setGameStatus('playing');
     setWinner(null);
     setWinningCells([]);
     setIsAiTurn(false);
+    
+    // Start a new game if playing with AI
+    if (selectedOpponent === 'ai') {
+      startNewGame();
+    }
   };
 
   // Go back to opponent selection
@@ -122,9 +129,16 @@ export default function Game() {
       const gameData = await response.json();
       setBoard(gameData.board);
       setCurrentPlayer(gameData.player_symbol);
-      setGameStatus(gameData.result === 'in_progress' ? 'playing' : 'won');
+      setPlayerSymbol(gameData.player_symbol); // Store the player's assigned symbol
       
-      if (gameData.result !== 'in_progress') {
+      if (gameData.result === 'in_progress') {
+        setGameStatus('playing');
+      } else if (gameData.result === 'draw') {
+        setGameStatus('draw');
+        setWinner('draw');
+      } else {
+        // gameData.result contains the winner ('X' or 'O')
+        setGameStatus('won');
         setWinner(gameData.result);
         const winResult = checkWinner(gameData.board);
         if (winResult) {
@@ -175,9 +189,15 @@ export default function Game() {
       
       const gameData = await response.json();
       setBoard(gameData.board);
-      setGameStatus(gameData.result === 'in_progress' ? 'playing' : (gameData.result === 'draw' ? 'draw' : 'won'));
       
-      if (gameData.result !== 'in_progress') {
+      if (gameData.result === 'in_progress') {
+        setGameStatus('playing');
+      } else if (gameData.result === 'draw') {
+        setGameStatus('draw');
+        setWinner('draw');
+      } else {
+        // gameData.result contains the winner ('X' or 'O')
+        setGameStatus('won');
         setWinner(gameData.result);
         const winResult = checkWinner(gameData.board);
         if (winResult) {
@@ -218,20 +238,21 @@ export default function Game() {
   const getStatusMessage = () => {
     if (gameStatus === 'won') {
       if (selectedOpponent === 'ai') {
-        return winner === 'X' ? 'You Won!' : 'AI Won!';
+        // Check if the winner is the player's symbol or not
+        return winner === playerSymbol ? '🎉 You Won!' : '🤖 AI Won!';
       }
-      return `Player ${winner} Won!`;
+      return `🎉 Player ${winner} Won!`;
     }
     if (gameStatus === 'draw') {
-      return "It's a Draw!";
+      return "🤝 It's a Draw!";
     }
     if (isAiTurn) {
-      return 'AI is thinking...';
+      return '🤔 AI is thinking...';
     }
     if (selectedOpponent === 'ai') {
-      return currentPlayer === 'X' ? 'Your Turn' : 'AI Turn';
+      return isAiTurn ? '🤖 AI Turn' : '👤 Your Turn';
     }
-    return `Player ${currentPlayer}'s Turn`;
+    return `👤 Player ${currentPlayer}'s Turn`;
   };
 
   const getGlowClass = () => {
@@ -246,16 +267,23 @@ export default function Game() {
   // Show game board if game has started
   if (gameStarted) {
     return (
-      <div className="game-container">
-        <div className="content">
+      <div className="container">
+        <div className="main-card">
           {/* Title */}
-          <div className="title">
-            <h1>Tic Tac Toe</h1>
+          <div className="title-container">
+            <h1 className="main-title">Tic Tac Toe</h1>
           </div>
 
-          {/* Game Info */}
-          <div className="game-info">
-            <div className="info-panel">
+          {/* Decorative Elements */}
+          <div className="decorative-x decorative-x-1">X</div>
+          <div className="decorative-o decorative-o-1">O</div>
+          <div className="decorative-x decorative-x-2">X</div>
+          <div className="decorative-o decorative-o-2">O</div>
+
+          {/* Game Board Container with Integrated Info */}
+          <div className={`game-board-container ${getGlowClass()}`}>
+            {/* Game Info - Integrated above board */}
+            <div className="game-info-integrated">
               <div className="status-message">{getStatusMessage()}</div>
               {selectedOpponent === 'ai' && (
                 <div className="ai-difficulty">
@@ -263,15 +291,13 @@ export default function Game() {
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Game Board */}
-          <div className={`game-board-container ${getGlowClass()}`}>
+            {/* Game Board */}
             <div className="game-board">
               {board.map((cell, index) => (
                 <button
                   key={index}
-                  className={`cell ${winningCells.includes(index) ? 'winning' : ''}`}
+                  className={`cell ${winningCells.includes(index) ? 'winning' : ''} ${isAiTurn ? 'ai-thinking' : ''}`}
                   onClick={() => handleCellClick(index)}
                   disabled={cell !== '' || gameStatus !== 'playing' || isAiTurn}
                 >
@@ -279,6 +305,9 @@ export default function Game() {
                     <span className={cell.toLowerCase()}>
                       {cell}
                     </span>
+                  )}
+                  {isAiTurn && cell === '' && (
+                    <div className="thinking-indicator">⏳</div>
                   )}
                 </button>
               ))}
@@ -300,6 +329,25 @@ export default function Game() {
             )}
           </div>
         </div>
+
+        {/* Game Over Overlay - Moved outside main-card */}
+        {gameStatus !== 'playing' && (
+          <div className="game-over-overlay">
+            <div className="game-over-content">
+              <div className="game-over-message">
+                {getStatusMessage()}
+              </div>
+              <div className="game-over-buttons">
+                <button className="btn btn-play-again" onClick={resetGame}>
+                  🔄 Play Again
+                </button>
+                <button className="btn btn-results" onClick={goToResults}>
+                  📊 View Results
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -339,7 +387,7 @@ export default function Game() {
           </div>
 
           {/* AI Option */}
-          <div className="opponent-card ai-card">
+          <div className="opponent-card">
             <button 
               className={`opponent-button ${selectedOpponent === 'ai' ? 'selected' : ''}`}
               onClick={() => selectOpponent('ai')}
@@ -352,48 +400,50 @@ export default function Game() {
                 </div>
               </div>
             </button>
-
-            {/* AI Difficulty Slider */}
-            <div className={`difficulty-slider ${selectedOpponent !== 'ai' ? 'hidden' : ''}`}>
-              <div className="difficulty-display">
-                <span className="difficulty-label">Difficulty:</span>
-                <span 
-                  className={`difficulty-name ${difficultyColors[currentDifficulty]}`}
-                >
-                  {difficultyNames[currentDifficulty]}
-                </span>
-              </div>
-              
-              <div className="slider-container">
-                <div className="slider-track">
-                  <div 
-                    className={`slider-progress ${difficultyColors[currentDifficulty]}`}
-                    style={{ width: `${((currentDifficulty - 1) / 4) * 100}%` }}
-                  ></div>
-                </div>
-                <input 
-                  type="range" 
-                  min="1" 
-                  max="5" 
-                  value={currentDifficulty}
-                  className="slider-input"
-                  onChange={(e) => updateDifficulty(e.target.value)}
-                />
-              </div>
-              
-              <div className="difficulty-labels">
-                {difficultyNames.slice(1).map((name, index) => (
-                  <span 
-                    key={index + 1}
-                    className={`label ${currentDifficulty === index + 1 ? `active ${difficultyColors[index + 1]}` : ''}`}
-                  >
-                    {name}
-                  </span>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
+
+        {/* AI Difficulty Slider - Full Width */}
+        {selectedOpponent === 'ai' && (
+          <div className="difficulty-slider-container">
+            <div className="difficulty-display">
+              <span className="difficulty-label">Difficulty:</span>
+              <span 
+                className={`difficulty-name ${difficultyColors[currentDifficulty]}`}
+              >
+                {difficultyNames[currentDifficulty]}
+              </span>
+            </div>
+            
+            <div className="slider-container">
+              <div className="slider-track">
+                <div 
+                  className={`slider-progress ${difficultyColors[currentDifficulty]}`}
+                  style={{ width: `${((currentDifficulty - 1) / 4) * 100}%` }}
+                ></div>
+              </div>
+              <input 
+                type="range" 
+                min="1" 
+                max="5" 
+                value={currentDifficulty}
+                className="slider-input"
+                onChange={(e) => updateDifficulty(e.target.value)}
+              />
+            </div>
+            
+            <div className="difficulty-labels">
+              {difficultyNames.slice(1).map((name, index) => (
+                <span 
+                  key={index + 1}
+                  className={`label ${currentDifficulty === index + 1 ? `active ${difficultyColors[index + 1]}` : ''}`}
+                >
+                  {name}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <button className="back-button" onClick={goBack}>← BACK</button>

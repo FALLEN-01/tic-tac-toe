@@ -10,8 +10,10 @@
 
 body {
   font-family: 'Annie Use Your Telescope', Helvetica, Arial, sans-serif;
-  background: white;
-  overflow: hidden;
+  background: linear-gradient(135deg, rgba(102,126,234,1) 0%, rgba(118,75,162,1) 100%);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
 .container {
@@ -27,9 +29,13 @@ body {
   position: relative;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 1) 0%, rgba(118, 75, 162, 1) 100%);
+  background: transparent;
   border: none;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Title */
@@ -48,11 +54,12 @@ body {
   font-family: 'Annie Use Your Telescope', Helvetica;
   font-weight: normal;
   color: white;
-  font-size: 2.8rem;
+  font-size: clamp(2.5rem, 8vw, 5rem);
   text-align: center;
   line-height: 1.2;
-  letter-spacing: 1px;
+  letter-spacing: 0.1em;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1rem;
 }
 
 /* Decorative Elements - Reduced size */
@@ -77,41 +84,49 @@ body {
 .decorative-x-2 { bottom: 12vh; right: 8vw; }
 .decorative-o-2 { bottom: 35vh; left: 6vw; }
 
-/* Opponent Cards Container - More compact */
+/* Add decorative elements to game board screen */
+.main-card .decorative-x, .main-card .decorative-o {
+  opacity: 0.05;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.05;
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+    opacity: 0.08;
+  }
+}
+
+/* Opponent Cards Container - Centered with equal spacing */
 .opponent-cards-container {
   position: absolute;
-  top: 16vh;
+  top: 25vh;
   left: 50vw;
   transform: translateX(-50%);
-  width: min(80vw, 900px);
+  width: min(70vw, 600px);
   display: flex;
-  flex-direction: column;
-  gap: 2vh;
+  flex-direction: row;
+  gap: 30px;
   z-index: 10;
-  padding-bottom: 12vh;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Opponent Cards - Enhanced desktop design */
+/* Opponent Cards - Equal square boxes */
 .opponent-card {
-  width: 100%;
-  position: relative;
-  margin-bottom: 1vh;
-}
-
-.opponent-card:first-child {
-  height: 14vh;
-  min-height: 110px;
-}
-
-.ai-card {
-  height: auto;
-  min-height: 14vh;
+  flex: 1;
+  max-width: 250px;
+  aspect-ratio: 1;
 }
 
 .opponent-button {
   width: 100%;
-  height: 14vh;
-  min-height: 110px;
+  height: 100%;
+  aspect-ratio: 1;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(15px);
   border: 2px solid rgba(255, 255, 255, 0.2);
@@ -158,16 +173,18 @@ body {
 
 .opponent-content {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  justify-content: center;
+  gap: 1rem;
   height: 100%;
   position: relative;
   z-index: 1;
-  padding: 0 1rem;
+  text-align: center;
 }
 
 .opponent-icon {
-  font-size: 3rem;
+  font-size: 2.5rem;
   color: rgba(255, 255, 255, 0.8);
   flex-shrink: 0;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
@@ -175,23 +192,40 @@ body {
 
 .opponent-text {
   flex: 1;
-  text-align: left;
+  text-align: center;
 }
 
 .opponent-title {
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   font-weight: bold;
   color: white;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   letter-spacing: 0.5px;
 }
 
 .opponent-description {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.5;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.3;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* AI Difficulty Slider - Spans full width of both boxes */
+.difficulty-slider-container {
+  position: absolute;
+  top: 45vh;
+  left: 50vw;
+  transform: translateX(-50%);
+  width: min(70vw, 600px);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  z-index: 10;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease-out;
 }
 
 /* Difficulty Slider - Enhanced design */
@@ -316,9 +350,10 @@ body {
 .label.active.purple { color: #a78bfa; }
 
 /* Action Buttons - More compact */
+/* Action Buttons - Updated positioning */
 .back-button {
   position: absolute;
-  bottom: 5vh;
+  bottom: 10vh;
   left: 5vw;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
@@ -345,7 +380,7 @@ body {
 
 .start-button {
   position: absolute;
-  bottom: 5vh;
+  bottom: 10vh;
   right: 5vw;
   background: linear-gradient(135deg, #22c55e, #16a34a);
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -379,132 +414,86 @@ body {
 }
 
 /* Game Board Styles */
-.game-container {
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-  background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%);
-}
-
-/* Background pattern */
-.game-container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  opacity: 0.3;
-}
-
-.content {
-  position: relative;
-  z-index: 10;
-  width: 100%;
-  height: 100%;
-}
-
-.title {
-  position: absolute;
-  top: 5vh;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  text-align: center;
-  padding: 0 10vw;
-}
-
-.title h1 {
-  font-family: 'Annie Use Your Telescope', cursive;
-  font-weight: normal;
-  color: white;
-  font-size: clamp(2rem, 6vw, 4rem);
-  opacity: 0.9;
-  letter-spacing: 0;
-  line-height: normal;
-}
-
-.game-info {
-  position: absolute;
-  top: 15vh;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-}
-
-.info-panel {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 8px;
-  padding: 12px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.status-message {
-  color: white;
-  font-size: clamp(1.2rem, 4vw, 2rem);
-  font-weight: bold;
-}
-
-.ai-difficulty {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: clamp(0.9rem, 2vw, 1.2rem);
-  margin-top: 4px;
-}
-
 .game-board-container {
-  position: absolute;
-  top: 60vh;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transition: all 1s ease;
-  border-radius: 12px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  z-index: 1;
+  margin-bottom: 2rem;
+}
+
+/* Integrated Game Info - Above the board */
+.game-info-integrated {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.game-info-integrated .status-message {
+  color: white;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 500;
+  font-family: 'Annie Use Your Telescope', cursive;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 0 0 0.5rem 0;
+}
+
+.game-info-integrated .ai-difficulty {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  font-family: 'Annie Use Your Telescope', cursive;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  margin-bottom: 3rem;
 }
 
 /* Game board glow effects */
-.game-board-container.glow-red {
-  box-shadow: 0 0 50px rgba(239, 68, 68, 0.6);
+.game-board-container.glow-red .game-board {
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
 }
 
-.game-board-container.glow-blue {
-  box-shadow: 0 0 50px rgba(59, 130, 246, 0.6);
+.game-board-container.glow-blue .game-board {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
 }
 
-.game-board-container.glow-green {
-  box-shadow: 0 0 50px rgba(34, 197, 94, 0.6);
+.game-board-container.glow-green .game-board {
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.8);
 }
 
 .game-board {
+  width: 360px;
+  height: 360px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-  width: 60vw;
-  height: 60vw;
-  max-width: 360px;
-  max-height: 360px;
-  min-width: 270px;
-  min-height: 270px;
+  padding: 12px;
+  margin: 0 auto;
+  border-radius: 12px;
+  transition: all 0.3s ease;
 }
 
 .cell {
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   color: white;
-  font-size: clamp(3rem, 8vw, 5rem);
+  font-size: 4rem;
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   outline: none;
+  line-height: 1;
+  min-height: 0;
+  min-width: 0;
 }
 
-.cell:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.05);
+.cell:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .cell:disabled {
@@ -513,16 +502,16 @@ body {
 
 .cell.winning {
   background: rgba(34, 197, 94, 0.3);
-  border-color: rgb(34, 197, 94);
-  animation: pulse 1s ease-in-out infinite;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.8);
+  animation: pulse 1s infinite;
 }
 
 .cell .x {
-  color: rgb(147, 197, 253);
+  color: #22d3ee;
 }
 
 .cell .o {
-  color: rgb(251, 113, 133);
+  color: #f472b6;
 }
 
 @keyframes pulse {
@@ -530,63 +519,290 @@ body {
     opacity: 1;
   }
   50% {
-    opacity: 0.7;
+    opacity: 0.5;
   }
 }
 
 .action-buttons {
-  position: absolute;
-  bottom: 5vh;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
-  gap: 16px;
+  gap: 1.5rem;
+  justify-content: center;
   align-items: center;
+  z-index: 20;
 }
 
 .btn {
   color: white;
-  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  font-size: clamp(0.9rem, 2vw, 1.125rem);
   font-weight: 600;
   padding: 12px 24px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   outline: none;
+  font-family: 'Annie Use Your Telescope', cursive;
 }
 
 .btn-back {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
 }
 
 .btn-back:hover {
-  background: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .btn-reset {
-  background: rgba(239, 68, 68, 0.8);
+  background: #dc2626;
+  border: none;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .btn-reset:hover {
-  background: rgb(239, 68, 68);
+  background: #b91c1c;
 }
 
 .btn-new {
-  background: rgba(34, 197, 94, 0.8);
+  background: #16a34a;
+  border: none;
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .btn-new:hover {
-  background: rgb(34, 197, 94);
+  background: #15803d;
+}
+
+/* AI Thinking Indicator */
+.cell.ai-thinking {
+  background: rgba(255, 255, 255, 0.1);
+  cursor: wait;
+}
+
+.thinking-indicator {
+  position: absolute;
+  font-size: 2rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Game Over Overlay */
+.game-over-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.game-over-content {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.5rem;
+  padding: 3rem;
+  text-align: center;
+  max-width: 28rem;
+  width: 90vw;
+  animation: slideIn 0.5s ease-out;
+  position: relative;
+  z-index: 10000;
+}
+
+.game-over-message {
+  color: white;
+  font-size: clamp(2rem, 6vw, 2.5rem);
+  font-weight: bold;
+  font-family: 'Annie Use Your Telescope', cursive;
+  margin-bottom: 1rem;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.game-over-emoji {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.game-over-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.game-over-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-play-again {
+  background: #16a34a;
+  border: none;
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-play-again:hover {
+  background: #15803d;
+}
+
+.btn-results {
+  background: #dc2626;
+  border: none;
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-results:hover {
+  background: #b91c1c;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Responsive design for game board */
+@media (max-width: 1200px) {
+  .opponent-cards-container {
+    width: min(80vw, 500px);
+    gap: 25px;
+  }
+  
+  .opponent-card {
+    max-width: 200px;
+  }
+  
+  .opponent-button {
+    padding: 1rem;
+  }
+  
+  .opponent-icon {
+    font-size: 2rem;
+  }
+  
+  .opponent-title {
+    font-size: 1.2rem;
+  }
+  
+  .opponent-description {
+    font-size: 0.8rem;
+  }
+  
+  .difficulty-slider-container {
+    width: min(80vw, 500px);
+    top: 47vh;
+  }
+}
+
 @media (max-width: 768px) {
+  .main-title {
+    font-size: 3rem;
+  }
+  
   .game-board {
-    width: 80vw;
-    height: 80vw;
+    width: 300px;
+    height: 300px;
+    gap: 8px;
+    padding: 8px;
+  }
+  
+  .cell {
+    font-size: 3rem;
+    border-radius: 8px;
+  }
+  
+  .opponent-cards-container {
+    flex-direction: column;
+    gap: 20px;
+    width: min(80vw, 300px);
+    top: 20vh;
+  }
+  
+  .opponent-card {
+    max-width: 100%;
+    aspect-ratio: 2.5;
+  }
+  
+  .opponent-button {
+    aspect-ratio: 2.5;
+  }
+  
+  .opponent-content {
+    flex-direction: row;
+    gap: 1rem;
+    text-align: left;
+  }
+  
+  .opponent-text {
+    text-align: left;
+  }
+  
+  .difficulty-slider-container {
+    top: 50vh;
+    width: min(80vw, 300px);
+    padding: 1.5rem;
+  }
+  
+  .game-info-integrated {
+    padding: 10px 20px;
+  }
+  
+  .game-info-integrated .status-message {
+    font-size: 1.5rem !important;
+  }
+  
+  .game-info-integrated .ai-difficulty {
+    font-size: 1rem !important;
   }
   
   .action-buttons {
@@ -596,5 +812,40 @@ body {
   
   .btn {
     min-width: 120px;
+    font-size: 1rem;
+  }
+  
+  .game-over-content {
+    padding: 2rem;
+  }
+  
+  .game-over-message {
+    font-size: 2rem;
+  }
+  
+  .game-over-buttons {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-title {
+    font-size: 2.5rem;
+  }
+  
+  .game-board {
+    width: 280px;
+    height: 280px;
+    gap: 6px;
+    padding: 6px;
+  }
+  
+  .cell {
+    font-size: 2.5rem;
+    border-radius: 6px;
+  }
+  
+  .game-over-buttons {
+    flex-direction: column;
   }
 }
