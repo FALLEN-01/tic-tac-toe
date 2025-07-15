@@ -280,9 +280,10 @@ export default function Game() {
           <div className="decorative-x decorative-x-2">X</div>
           <div className="decorative-o decorative-o-2">O</div>
 
-          {/* Game Info */}
-          <div className="game-info">
-            <div className="info-panel">
+          {/* Game Board Container with Integrated Info */}
+          <div className={`game-board-container ${getGlowClass()}`}>
+            {/* Game Info - Integrated above board */}
+            <div className="game-info-integrated">
               <div className="status-message">{getStatusMessage()}</div>
               {selectedOpponent === 'ai' && (
                 <div className="ai-difficulty">
@@ -290,10 +291,8 @@ export default function Game() {
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Game Board */}
-          <div className={`game-board-container ${getGlowClass()}`}>
+            {/* Game Board */}
             <div className="game-board">
               {board.map((cell, index) => (
                 <button
