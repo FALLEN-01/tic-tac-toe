@@ -209,103 +209,103 @@ body {
 }
 
 .decorative-x-1 { 
-  top: 15vh; 
-  left: 10vw; 
+  top: 11vh; 
+  left: 5vw; 
   animation: randomShake1 5.2s ease-in-out infinite;
 }
 .decorative-o-1 { 
-  top: 20vh; 
-  right: 15vw; 
+  top: 34vh; 
+  right: 12vw; 
   animation: randomShake2 4.8s ease-in-out infinite;
 }
 .decorative-x-2 { 
-  bottom: 25vh; 
-  right: 12vw; 
+  bottom: 28vh; 
+  right: 8vw; 
   animation: randomShake3 5.5s ease-in-out infinite;
 }
 .decorative-o-2 { 
-  bottom: 30vh; 
-  left: 8vw; 
+  bottom: 7vh; 
+  left: 16vw; 
   animation: randomShake4 4.3s ease-in-out infinite;
 }
 .decorative-x-3 { 
-  top: 40vh; 
-  left: 18vw; 
+  top: 58vh; 
+  left: 21vw; 
   animation: randomShake1 4.7s ease-in-out infinite;
 }
 .decorative-o-3 { 
-  top: 50vh; 
-  right: 6vw; 
+  top: 43vh; 
+  right: 3vw; 
   animation: randomShake2 5.9s ease-in-out infinite;
 }
 .decorative-x-4 { 
-  bottom: 15vh; 
-  left: 5vw; 
+  bottom: 51vh; 
+  left: 2vw; 
   animation: randomShake3 4.2s ease-in-out infinite;
 }
 .decorative-o-4 { 
-  bottom: 35vh; 
-  right: 20vw; 
+  bottom: 19vh; 
+  right: 23vw; 
   animation: randomShake4 5.8s ease-in-out infinite;
 }
 .decorative-x-5 { 
-  top: 60vh; 
-  right: 3vw; 
+  top: 72vh; 
+  right: 6vw; 
   animation: randomShake5 5.1s ease-in-out infinite;
 }
 .decorative-o-5 { 
-  top: 8vh; 
-  left: 22vw; 
+  top: 3vh; 
+  left: 24vw; 
   animation: randomShake6 4.6s ease-in-out infinite;
 }
 .decorative-x-6 { 
-  bottom: 10vh; 
-  right: 12vw; 
+  bottom: 14vh; 
+  right: 17vw; 
   animation: randomShake1 5.3s ease-in-out infinite;
 }
 .decorative-o-6 { 
-  bottom: 45vh; 
-  left: 2vw; 
+  bottom: 42vh; 
+  left: 9vw; 
   animation: randomShake2 4.9s ease-in-out infinite;
 }
 .decorative-x-7 { 
-  top: 70vh; 
-  left: 12vw; 
+  top: 26vh; 
+  left: 13vw; 
   animation: randomShake3 4.1s ease-in-out infinite;
 }
 .decorative-o-7 { 
-  top: 5vh; 
-  right: 25vw; 
+  top: 65vh; 
+  right: 21vw; 
   animation: randomShake4 5.7s ease-in-out infinite;
 }
 .decorative-x-8 { 
-  bottom: 5vh; 
-  right: 8vw; 
+  bottom: 4vh; 
+  right: 1vw; 
   animation: randomShake5 4.8s ease-in-out infinite;
 }
 .decorative-o-8 { 
-  bottom: 55vh; 
-  left: 15vw; 
+  bottom: 36vh; 
+  left: 18vw; 
   animation: randomShake6 5.4s ease-in-out infinite;
 }
 .decorative-x-9 { 
-  top: 75vh; 
-  right: 2vw; 
+  top: 48vh; 
+  right: 14vw; 
   animation: randomShake1 4.4s ease-in-out infinite;
 }
 .decorative-o-9 { 
-  top: 25vh; 
-  left: 25vw; 
+  top: 17vh; 
+  left: 1vw; 
   animation: randomShake2 5.6s ease-in-out infinite;
 }
 .decorative-x-10 { 
-  bottom: 20vh; 
-  right: 18vw; 
+  bottom: 23vh; 
+  right: 10vw; 
   animation: randomShake3 5.0s ease-in-out infinite;
 }
 .decorative-o-10 { 
-  bottom: 2vh; 
-  left: 18vw; 
+  bottom: 59vh; 
+  left: 7vw; 
   animation: randomShake4 4.5s ease-in-out infinite;
 }
 .main-content {
