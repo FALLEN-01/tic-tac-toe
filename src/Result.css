@@ -200,27 +200,59 @@
   top: 27vh; 
   right: 24vw; 
   animation: randomShake4 4.5s ease-in-out infinite;
-} 
-  left: 17vw; 
-  animation: randomShake4 4.5s ease-in-out infinite;
 }
 
 /* Desktop optimized styles */
-.result-container {
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.main-card {
   position: relative;
+  width: 100%;
+  max-width: 900px;
+  min-height: auto;
+  background: transparent;
+  border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  padding: 20px;
+}
+
+.result-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
   color: white;
-  text-align: center;
   padding: 4rem 2rem;
-  max-width: 900px;
-  margin: 0 auto;
-  overflow-x: hidden;
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   gap: 2rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+body {
+  font-family: 'Annie Use Your Telescope', Helvetica, Arial, sans-serif;
+  background: linear-gradient(135deg, rgba(102,126,234,1) 0%, rgba(118,75,162,1) 100%);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 .result-emoji {
