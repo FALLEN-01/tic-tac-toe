@@ -27,62 +27,6 @@ export default function Game() {
   const difficultyNames = ['', 'Very Easy', 'Easy', 'Medium', 'Hard', 'Expert'];
   const difficultyColors = ['', 'blue', 'green', 'orange', 'red', 'purple'];
 
-  // Local game logic for friend play
-  const checkLocalWinner = (board) => {
-    const winConditions = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8],  // rows
-      [0, 3, 6], [1, 4, 7], [2, 5, 8],  // columns
-      [0, 4, 8], [2, 4, 6]              // diagonals
-    ];
-    
-    for (let condition of winConditions) {
-      const [a, b, c] = condition;
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return { winner: board[a], winningCells: condition };
-      }
-    }
-    
-    if (!board.includes('')) {
-      return { winner: 'draw', winningCells: [] };
-    }
-    
-    return null;
-  };
-
-  const makeLocalMove = (index) => {
-    const newBoard = [...board];
-    const newMoveHistory = [...moveHistory];
-    
-    // Make the move
-    newBoard[index] = currentPlayer;
-    newMoveHistory.push(index);
-    
-    // Handle decay mode
-    if (mode === 'decay' && newMoveHistory.length > 6) {
-      const oldMove = newMoveHistory.shift();
-      newBoard[oldMove] = '';
-    }
-    
-    setBoard(newBoard);
-    setMoveHistory(newMoveHistory);
-    
-    // Check for winner
-    const result = checkLocalWinner(newBoard);
-    if (result) {
-      if (result.winner === 'draw') {
-        setGameStatus('draw');
-        setWinner('draw');
-      } else {
-        setGameStatus('won');
-        setWinner(result.winner);
-        setWinningCells(result.winningCells);
-      }
-    } else {
-      // Switch player
-      setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
-    }
-  };
-
   const selectOpponent = (opponent) => {
     setSelectedOpponent(opponent);
   };

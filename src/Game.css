@@ -847,6 +847,50 @@ body {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+/* Coming Soon Modal Styles */
+.overlay-content {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.5rem;
+  padding: 3rem;
+  text-align: center;
+  max-width: 28rem;
+  width: 90vw;
+  animation: slideIn 0.5s ease-out;
+  position: relative;
+  z-index: 10000;
+}
+
+.overlay-title {
+  color: white;
+  font-size: clamp(2rem, 6vw, 2.5rem);
+  font-weight: bold;
+  font-family: 'Annie Use Your Telescope', cursive;
+  margin-bottom: 1rem;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.overlay-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+/* Animation for modal */
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-2rem) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 /* Responsive design for game board */
 @media (max-width: 1200px) {
   .opponent-cards-container {
