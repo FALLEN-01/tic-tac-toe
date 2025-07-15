@@ -43,7 +43,7 @@ body {
   overflow: hidden;
 }
 
-/* Decorative floating elements - Enhanced desktop design */
+/* Decorative floating elements - More subtle */
 .decorative-background {
   position: absolute;
   top: 0;
@@ -58,8 +58,8 @@ body {
   position: absolute;
   font-family: 'Arial', Helvetica, sans-serif;
   font-weight: bold;
-  color: rgba(255, 255, 255, 0.1);
-  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.08);
+  font-size: 3rem;
   animation: float 6s ease-in-out infinite;
   user-select: none;
   pointer-events: none;
@@ -98,20 +98,20 @@ body {
 @keyframes float {
   0%, 100% {
     transform: translateY(0px) rotate(0deg);
-    opacity: 0.1;
+    opacity: 0.08;
   }
   50% {
-    transform: translateY(-20px) rotate(5deg);
-    opacity: 0.15;
+    transform: translateY(-15px) rotate(3deg);
+    opacity: 0.12;
   }
 }
 
-/* Main content wrapper - Enhanced desktop design */
+/* Main content wrapper - Balanced design */
 .main-content {
   position: relative;
   z-index: 10;
-  max-width: 900px;
-  padding: 2rem;
+  max-width: 800px;
+  padding: 1.8rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -120,10 +120,10 @@ body {
 }
 
 .game-logo {
-  font-size: 6rem;
-  margin-bottom: 2rem;
+  font-size: 4.5rem;
+  margin-bottom: 1.5rem;
   animation: pulse 3s ease-in-out infinite;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25));
 }
 
 @keyframes pulse {
@@ -137,21 +137,21 @@ body {
 
 .home-title {
   font-family: 'Annie Use Your Telescope', Helvetica, sans-serif;
-  font-size: 3.5rem;
+  font-size: 2.8rem;
   font-weight: normal;
-  margin-bottom: 2rem;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  letter-spacing: 2px;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+  letter-spacing: 1.5px;
   opacity: 0.95;
   animation: fadeInUp 1s ease-out 0.5s both;
 }
 
 .home-subtitle {
-  font-size: 1.3rem;
-  margin-bottom: 3rem;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
   opacity: 0.9;
-  max-width: 600px;
-  line-height: 1.6;
+  max-width: 550px;
+  line-height: 1.5;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   animation: fadeInUp 1s ease-out 0.8s both;
 }
@@ -170,17 +170,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 1.2rem 2.5rem;
+  gap: 0.6rem;
+  padding: 1rem 2rem;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(15px);
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50px;
   color: white;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -561,44 +561,44 @@ body {
   transform: translateY(0);
 }
 
-/* Enhanced Desktop Design */
+/* Balanced Desktop Design */
 .game-modes-container {
-  width: 85vw;
-  gap: 2.5rem;
+  width: 80vw;
+  gap: 2rem;
 }
 
 .game-card {
-  max-width: 350px;
-  min-width: 300px;
+  max-width: 320px;
+  min-width: 280px;
 }
 
 .main-content {
-  max-width: 900px;
-  padding: 2rem;
+  max-width: 800px;
+  padding: 1.8rem;
 }
 
 .game-logo {
-  font-size: 6rem;
-  margin-bottom: 2rem;
+  font-size: 4.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .home-title {
-  font-size: 3.5rem;
-  margin-bottom: 2rem;
+  font-size: 2.8rem;
+  margin-bottom: 1.5rem;
 }
 
 .home-subtitle {
-  font-size: 1.3rem;
-  margin-bottom: 3rem;
-  max-width: 600px;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  max-width: 550px;
 }
 
 .button-content {
-  padding: 1.2rem 2.5rem;
-  font-size: 1.2rem;
-  gap: 0.75rem;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  gap: 0.6rem;
 }
 
 .floating-x, .floating-o {
-  font-size: 4rem;
+  font-size: 3rem;
 }
