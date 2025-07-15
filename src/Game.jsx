@@ -60,6 +60,11 @@ export default function Game() {
     setWinner(null);
     setWinningCells([]);
     setIsAiTurn(false);
+    
+    // Start a new game if playing with AI
+    if (selectedOpponent === 'ai') {
+      startNewGame();
+    }
   };
 
   // Go back to opponent selection
@@ -309,6 +314,25 @@ export default function Game() {
               ))}
             </div>
           </div>
+
+          {/* Game Over Overlay */}
+          {gameStatus !== 'playing' && (
+            <div className="game-over-overlay">
+              <div className="game-over-content">
+                <div className="game-over-message">
+                  {getStatusMessage()}
+                </div>
+                <div className="game-over-buttons">
+                  <button className="btn btn-play-again" onClick={resetGame}>
+                    🔄 Play Again
+                  </button>
+                  <button className="btn btn-results" onClick={goToResults}>
+                    📊 View Results
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="action-buttons">
