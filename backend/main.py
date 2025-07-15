@@ -31,6 +31,7 @@ def new_game(req: NewGameRequest):
     board = [""]*9
     player_symbol = random.choice(["X", "O"])
     your_turn = player_symbol == "X"
+    move_history = []
     
     ai_move = None
     if not your_turn and req.ai_mode:
@@ -38,12 +39,13 @@ def new_game(req: NewGameRequest):
         ai_move = best_move(board, "X", depth, turn=True)
         if ai_move is not None and ai_move != -1:
             board[ai_move] = "X"
+            move_history.append(ai_move)
         
     result = check_winner(board)
     if result is None:
         result = "in_progress"
     
-    response = NewGameResponse(
+    return NewGameResponse(
         player_symbol=player_symbol,
         your_turn=your_turn,
         board=board,
@@ -51,33 +53,48 @@ def new_game(req: NewGameRequest):
         result=result,
         depth=req.depth or 5,
         ai_enabled=req.ai_mode,
-        mode=req.mode
+        mode=req.mode,
+        move_history=move_history if req.mode == "decay" else [],
     )
-    
-    print(f"New game response: {response}")  # Debug log
-    return response
-        
 
 @app.post("/make_move", response_model=NewGameResponse)
 def make_move(req: MoveRequest):
     board = req.board[:]  # Create a copy to avoid modifying the original
     if board[req.player_move] != "":
         raise HTTPException(status_code=400, detail="Invalid move: Cell already occupied")
-    
+
+    if req.mode == "decay":
+        move_history = req.move_history.copy()
+    else:
+        move_history = []
+
+    # Player move
     board[req.player_move] = req.player_symbol
+    if req.mode == "decay":
+        move_history.append(req.player_move)
+        if len(move_history) > 6:
+            old_move = move_history.pop(0)
+            board[old_move] = ""
+
     result = check_winner(board)
     ai_move = None
-    
+
+    # AI move if game not finished
     if result is None and req.ai_enabled:
         ai_symbol = "O" if req.player_symbol == "X" else "X"
         ai_move = best_move(board, ai_symbol, req.depth, True)
         if ai_move != -1:
             board[ai_move] = ai_symbol
+            if req.mode == "decay":
+                move_history.append(ai_move)
+                if len(move_history) > 6:
+                    old_move = move_history.pop(0)
+                    board[old_move] = ""
         result = check_winner(board)
-        
+
     if result is None:
         result = "in_progress"
-        
+
     return NewGameResponse(
         player_symbol=req.player_symbol,
         your_turn=(result == "in_progress"),
@@ -86,6 +103,6 @@ def make_move(req: MoveRequest):
         result=result,
         depth=req.depth,
         ai_enabled=req.ai_enabled,
-        mode=req.mode
+        mode=req.mode,
+        move_history=move_history if req.mode == "decay" else []
     )
-        

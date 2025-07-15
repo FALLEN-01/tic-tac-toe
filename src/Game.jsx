@@ -8,7 +8,7 @@ export default function Game() {
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode') || 'classic';
   
-  // Game selection state
+  // Game selection state - mode comes from URL, only need opponent selection
   const [selectedOpponent, setSelectedOpponent] = useState(null);
   const [currentDifficulty, setCurrentDifficulty] = useState(3);
   const [gameStarted, setGameStarted] = useState(false);
@@ -37,10 +37,8 @@ export default function Game() {
     if (!selectedOpponent) return;
     setGameStarted(true);
     
-    // If playing with AI, start a new game with the backend
-    if (selectedOpponent === 'ai') {
-      startNewGame();
-    }
+    // Start a new game with the backend for both AI and friend games
+    startNewGame();
   };
 
   // Handle cell click in game
@@ -61,10 +59,8 @@ export default function Game() {
     setWinningCells([]);
     setIsAiTurn(false);
     
-    // Start a new game if playing with AI
-    if (selectedOpponent === 'ai') {
-      startNewGame();
-    }
+    // Start a new game with the backend for both AI and friend games
+    startNewGame();
   };
 
   // Go back to opponent selection
@@ -81,28 +77,6 @@ export default function Game() {
   const goToResults = () => {
     const result = winner === 'draw' ? 'draw' : winner;
     navigate(`/result/${gameId}?winner=${result}&result=${gameStatus}`);
-  };
-
-  // Game logic functions
-  const checkWinner = (board) => {
-    const winPatterns = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-      [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
-      [0, 4, 8], [2, 4, 6] // diagonals
-    ];
-
-    for (let pattern of winPatterns) {
-      const [a, b, c] = pattern;
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return { winner: board[a], winningCells: pattern };
-      }
-    }
-
-    if (board.every(cell => cell !== '')) {
-      return { winner: 'draw', winningCells: [] };
-    }
-
-    return null;
   };
 
   // API calls to FastAPI backend
@@ -131,24 +105,22 @@ export default function Game() {
       
       setBoard(gameData.board);
       setCurrentPlayer(gameData.player_symbol);
-      setPlayerSymbol(gameData.player_symbol); // Store the player's assigned symbol
+      setPlayerSymbol(gameData.player_symbol);
       
-      // Handle both "in_progress" and "in progress" formats
-      const normalizedResult = gameData.result.replace(/\s+/g, '_');
-      
-      if (normalizedResult === 'in_progress') {
+      // Use API response directly for game status
+      if (gameData.result === 'in_progress') {
         setGameStatus('playing');
-      } else if (normalizedResult === 'draw') {
+        setWinner(null);
+        setWinningCells([]);
+      } else if (gameData.result === 'draw') {
         setGameStatus('draw');
         setWinner('draw');
+        setWinningCells([]);
       } else {
         // gameData.result contains the winner ('X' or 'O')
         setGameStatus('won');
         setWinner(gameData.result);
-        const winResult = checkWinner(gameData.board);
-        if (winResult) {
-          setWinningCells(winResult.winningCells);
-        }
+        setWinningCells([]); // API doesn't provide winning cells, but we don't need them
       }
       
       // If AI made the first move, update the turn
@@ -158,18 +130,11 @@ export default function Game() {
       
     } catch (error) {
       console.error('Error starting new game:', error);
-      // Fallback to local game if API is not available
-      alert('Backend server not available. Playing in local mode.');
+      alert('Backend server not available. Please try again.');
     }
   };
 
   const makeMove = async (index) => {
-    if (selectedOpponent !== 'ai') {
-      // For local multiplayer, handle moves locally
-      handleLocalMove(index);
-      return;
-    }
-
     try {
       setIsAiTurn(true);
       
@@ -182,7 +147,7 @@ export default function Game() {
           board: board,
           player_move: index,
           player_symbol: currentPlayer,
-          ai_enabled: true,
+          ai_enabled: selectedOpponent === 'ai',
           depth: currentDifficulty,
           mode: mode
         }),
@@ -195,22 +160,22 @@ export default function Game() {
       const gameData = await response.json();
       setBoard(gameData.board);
       
-      // Handle both "in_progress" and "in progress" formats
-      const normalizedResult = gameData.result.replace(/\s+/g, '_');
-      
-      if (normalizedResult === 'in_progress') {
+      // Use API response directly for game status
+      if (gameData.result === 'in_progress') {
         setGameStatus('playing');
-      } else if (normalizedResult === 'draw') {
+        setWinner(null);
+        setWinningCells([]);
+        // Update current player for next turn
+        setCurrentPlayer(gameData.player_symbol);
+      } else if (gameData.result === 'draw') {
         setGameStatus('draw');
         setWinner('draw');
+        setWinningCells([]);
       } else {
         // gameData.result contains the winner ('X' or 'O')
         setGameStatus('won');
         setWinner(gameData.result);
-        const winResult = checkWinner(gameData.board);
-        if (winResult) {
-          setWinningCells(winResult.winningCells);
-        }
+        setWinningCells([]); // API handles winner detection
       }
       
       setIsAiTurn(false);
@@ -218,28 +183,8 @@ export default function Game() {
     } catch (error) {
       console.error('Error making move:', error);
       setIsAiTurn(false);
-      // Fallback to local move
-      handleLocalMove(index);
+      alert('Error making move. Please try again.');
     }
-  };
-
-  const handleLocalMove = (index) => {
-    const newBoard = [...board];
-    newBoard[index] = currentPlayer;
-    setBoard(newBoard);
-
-    // Check for game end
-    const result = checkWinner(newBoard);
-    if (result) {
-      setGameStatus(result.winner === 'draw' ? 'draw' : 'won');
-      setWinner(result.winner);
-      setWinningCells(result.winningCells);
-      return;
-    }
-
-    // Switch player for local multiplayer
-    const nextPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    setCurrentPlayer(nextPlayer);
   };
 
   // Helper functions for game display
@@ -360,7 +305,7 @@ export default function Game() {
     );
   }
 
-  // Show opponent selection
+  // Show game setup
   return (
     <div className="container">
       {/* Main Card Container */}
@@ -368,6 +313,9 @@ export default function Game() {
         {/* Title */}
         <div className="title-container">
           <h1 className="main-title">Choose Your Opponent</h1>
+          <p className="game-mode-display">
+            Playing: <span className="selected-mode">{mode === 'classic' ? 'Tic Tac Toe' : mode === 'decay' ? 'Decay Tac Toe' : mode}</span>
+          </p>
         </div>
 
         {/* Decorative Elements */}
@@ -376,79 +324,118 @@ export default function Game() {
         <div className="decorative-x decorative-x-2">X</div>
         <div className="decorative-o decorative-o-2">O</div>
 
-        {/* Opponent Selection Cards */}
-        <div className="opponent-cards-container">
-          {/* Friends Option */}
-          <div className="opponent-card">
-            <button 
-              className={`opponent-button ${selectedOpponent === 'friends' ? 'selected' : ''}`}
-              onClick={() => selectOpponent('friends')}
-            >
-              <div className="opponent-content">
-                <div className="opponent-icon">👥</div>
-                <div className="opponent-text">
-                  <h2 className="opponent-title">Play with Friend</h2>
-                  <p className="opponent-description">Challenge a friend in local multiplayer. Take turns and see who's the ultimate strategist!</p>
+        {/* Game Mode Selection */}
+        <div className="selection-section">
+          <h2 className="section-title">Choose Game Mode</h2>
+          <div className="option-cards-container">
+            <div className="option-card">
+              <button 
+                className="option-button"
+                onClick={() => alert('Mode already selected from Home')}
+              >
+                <div className="option-content">
+                  <div className="option-icon">⭕</div>
+                  <div className="option-text">
+                    <h3 className="option-title">Tic Tac Toe</h3>
+                    <p className="option-description">The classic game you know and love</p>
+                  </div>
                 </div>
-              </div>
-            </button>
-          </div>
+              </button>
+            </div>
 
-          {/* AI Option */}
-          <div className="opponent-card">
-            <button 
-              className={`opponent-button ${selectedOpponent === 'ai' ? 'selected' : ''}`}
-              onClick={() => selectOpponent('ai')}
-            >
-              <div className="opponent-content">
-                <div className="opponent-icon">🤖</div>
-                <div className="opponent-text">
-                  <h2 className="opponent-title">Play with AI</h2>
-                  <p className="opponent-description">Test your skills against our intelligent AI opponent. Choose your difficulty level!</p>
+            <div className="option-card">
+              <button 
+                className="option-button"
+                onClick={() => alert('Mode already selected from Home')}
+              >
+                <div className="option-content">
+                  <div className="option-icon">�</div>
+                  <div className="option-text">
+                    <h3 className="option-title">Decay Tac Toe</h3>
+                    <p className="option-description">Pieces disappear over time</p>
+                  </div>
                 </div>
-              </div>
-            </button>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* AI Difficulty Slider - Full Width */}
-        {selectedOpponent === 'ai' && (
-          <div className="difficulty-slider-container">
-            <div className="difficulty-display">
-              <span className="difficulty-label">Difficulty:</span>
-              <span 
-                className={`difficulty-name ${difficultyColors[currentDifficulty]}`}
+        {/* Opponent Selection */}
+        <div className="selection-section">
+          <div className="option-cards-container">
+            <div className="option-card">
+              <button 
+                className={`option-button ${selectedOpponent === 'friends' ? 'selected' : ''}`}
+                onClick={() => selectOpponent('friends')}
               >
-                {difficultyNames[currentDifficulty]}
-              </span>
+                <div className="option-content">
+                  <div className="option-icon">👥</div>
+                  <div className="option-text">
+                    <h3 className="option-title">Play with Friend</h3>
+                    <p className="option-description">Local multiplayer</p>
+                  </div>
+                </div>
+              </button>
             </div>
-            
-            <div className="slider-container">
-              <div className="slider-track">
-                <div 
-                  className={`slider-progress ${difficultyColors[currentDifficulty]}`}
-                  style={{ width: `${((currentDifficulty - 1) / 4) * 100}%` }}
-                ></div>
-              </div>
-              <input 
-                type="range" 
-                min="1" 
-                max="5" 
-                value={currentDifficulty}
-                className="slider-input"
-                onChange={(e) => updateDifficulty(e.target.value)}
-              />
+
+            <div className="option-card">
+              <button 
+                className={`option-button ${selectedOpponent === 'ai' ? 'selected' : ''}`}
+                onClick={() => selectOpponent('ai')}
+              >
+                <div className="option-content">
+                  <div className="option-icon">🤖</div>
+                  <div className="option-text">
+                    <h3 className="option-title">Play with AI</h3>
+                    <p className="option-description">Challenge the computer</p>
+                  </div>
+                </div>
+              </button>
             </div>
-            
-            <div className="difficulty-labels">
-              {difficultyNames.slice(1).map((name, index) => (
+          </div>
+        </div>
+
+        {/* AI Difficulty Slider */}
+        {selectedOpponent === 'ai' && (
+          <div className="selection-section">
+            <h2 className="section-title">AI Difficulty</h2>
+            <div className="difficulty-slider-container">
+              <div className="difficulty-display">
+                <span className="difficulty-label">Level:</span>
                 <span 
-                  key={index + 1}
-                  className={`label ${currentDifficulty === index + 1 ? `active ${difficultyColors[index + 1]}` : ''}`}
+                  className={`difficulty-name ${difficultyColors[currentDifficulty]}`}
                 >
-                  {name}
+                  {difficultyNames[currentDifficulty]}
                 </span>
-              ))}
+              </div>
+              
+              <div className="slider-container">
+                <div className="slider-track">
+                  <div 
+                    className={`slider-progress ${difficultyColors[currentDifficulty]}`}
+                    style={{ width: `${((currentDifficulty - 1) / 4) * 100}%` }}
+                  ></div>
+                </div>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="5" 
+                  value={currentDifficulty}
+                  className="slider-input"
+                  onChange={(e) => updateDifficulty(e.target.value)}
+                />
+              </div>
+              
+              <div className="difficulty-labels">
+                {difficultyNames.slice(1).map((name, index) => (
+                  <span 
+                    key={index + 1}
+                    className={`label ${currentDifficulty === index + 1 ? `active ${difficultyColors[index + 1]}` : ''}`}
+                  >
+                    {name}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         )}

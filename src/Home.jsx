@@ -13,9 +13,8 @@ export default function Home() {
   };
 
   const selectGameMode = (mode) => {
-    // Generate a unique game ID
-    const gameId = Math.random().toString(36).substr(2, 9);
-    navigate(`/game`);
+    // Navigate directly to game with selected mode
+    navigate(`/game?mode=${mode}`);
   };
 
   const handleComingSoon = () => {
