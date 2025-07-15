@@ -4,20 +4,26 @@ import "./Game.css";
 
 export default function Game() {
   const navigate = useNavigate();
-  const [showComingSoon, setShowComingSoon] = useState(false);
+  const [selectedOpponent, setSelectedOpponent] = useState(null);
+  const [currentDifficulty, setCurrentDifficulty] = useState(3);
 
-  const selectGameMode = (mode) => {
-    // Generate a unique game ID
+  const difficultyNames = ['', 'Very Easy', 'Easy', 'Medium', 'Hard', 'Expert'];
+  const difficultyColors = ['', 'blue', 'green', 'orange', 'red', 'purple'];
+
+  const selectOpponent = (opponent) => {
+    setSelectedOpponent(opponent);
+  };
+
+  const updateDifficulty = (value) => {
+    setCurrentDifficulty(parseInt(value));
+  };
+
+  const startGame = () => {
+    if (!selectedOpponent) return;
+    
     const gameId = Math.random().toString(36).substr(2, 9);
-    navigate(`/game/${gameId}?mode=${mode}`);
-  };
-
-  const handleComingSoon = () => {
-    setShowComingSoon(true);
-  };
-
-  const closeOverlay = () => {
-    setShowComingSoon(false);
+    const opponent = selectedOpponent === 'ai' ? `ai-${currentDifficulty}` : 'friends';
+    navigate(`/actual-game/${gameId}?opponent=${opponent}`);
   };
 
   const goBack = () => {
@@ -30,65 +36,100 @@ export default function Game() {
       <div className="main-card">
         {/* Title */}
         <div className="title-container">
-          <h1 className="main-title">Game Modes</h1>
+          <h1 className="main-title">Choose Your Opponent</h1>
         </div>
-        
+
         {/* Decorative Elements */}
         <div className="decorative-x decorative-x-1">X</div>
         <div className="decorative-o decorative-o-1">O</div>
         <div className="decorative-x decorative-x-2">X</div>
         <div className="decorative-o decorative-o-2">O</div>
-        
-        {/* Game Mode Cards */}
-        <div className="game-modes-container">
-          {/* Tic Tac Toe Card */}
-          <div className="game-card">
-            <button className="game-button" onClick={() => selectGameMode('classic')}>
-              <div className="game-content">
-                <div className="game-icon red-icon">⭕</div>
-                <h2 className="game-title">Tic Tac Toe</h2>
-                <p className="game-description">The classic game you know and love. Simple rules, timeless fun.</p>
+
+        {/* Opponent Selection Cards */}
+        <div className="opponent-cards-container">
+          {/* Friends Option */}
+          <div className="opponent-card">
+            <button 
+              className={`opponent-button ${selectedOpponent === 'friends' ? 'selected' : ''}`}
+              onClick={() => selectOpponent('friends')}
+            >
+              <div className="opponent-content">
+                <div className="opponent-icon">👥</div>
+                <div className="opponent-text">
+                  <h2 className="opponent-title">Play with Friend</h2>
+                  <p className="opponent-description">Challenge a friend in local multiplayer. Take turns and see who's the ultimate strategist!</p>
+                </div>
               </div>
             </button>
           </div>
-          
-          {/* Decay Tac Toe Card */}
-          <div className="game-card">
-            <button className="game-button" onClick={() => selectGameMode('decay')}>
-              <div className="game-content">
-                <div className="game-icon yellow-icon">😵</div>
-                <h2 className="game-title">Decay Tac Toe</h2>
-                <p className="game-description">Pieces disappear over time! Plan your moves carefully before they fade away.</p>
+
+          {/* AI Option */}
+          <div className="opponent-card ai-card">
+            <button 
+              className={`opponent-button ${selectedOpponent === 'ai' ? 'selected' : ''}`}
+              onClick={() => selectOpponent('ai')}
+            >
+              <div className="opponent-content">
+                <div className="opponent-icon">🤖</div>
+                <div className="opponent-text">
+                  <h2 className="opponent-title">Play with AI</h2>
+                  <p className="opponent-description">Test your skills against our intelligent AI opponent. Choose your difficulty level!</p>
+                </div>
               </div>
             </button>
-          </div>
-          
-          {/* Super Tac Toe Card */}
-          <div className="game-card">
-            <button className="game-button" onClick={handleComingSoon}>
-              <div className="game-content">
-                <div className="game-icon star-icon">⭐</div>
-                <h2 className="game-title">Super Tac Toe</h2>
-                <p className="game-description">The ultimate challenge with multiple grids and advanced mechanics.</p>
+
+            {/* AI Difficulty Slider */}
+            <div className={`difficulty-slider ${selectedOpponent !== 'ai' ? 'hidden' : ''}`}>
+              <div className="difficulty-display">
+                <span className="difficulty-label">Difficulty:</span>
+                <span 
+                  className={`difficulty-name ${difficultyColors[currentDifficulty]}`}
+                >
+                  {difficultyNames[currentDifficulty]}
+                </span>
               </div>
-            </button>
+              
+              <div className="slider-container">
+                <div className="slider-track">
+                  <div 
+                    className={`slider-progress ${difficultyColors[currentDifficulty]}`}
+                    style={{ width: `${((currentDifficulty - 1) / 4) * 100}%` }}
+                  ></div>
+                </div>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="5" 
+                  value={currentDifficulty}
+                  className="slider-input"
+                  onChange={(e) => updateDifficulty(e.target.value)}
+                />
+              </div>
+              
+              <div className="difficulty-labels">
+                {difficultyNames.slice(1).map((name, index) => (
+                  <span 
+                    key={index + 1}
+                    className={`label ${currentDifficulty === index + 1 ? `active ${difficultyColors[index + 1]}` : ''}`}
+                  >
+                    {name}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-        
-        {/* Back Button */}
+
+        {/* Action Buttons */}
         <button className="back-button" onClick={goBack}>← BACK</button>
+        <button 
+          className={`start-button ${!selectedOpponent ? 'disabled' : ''}`}
+          onClick={startGame}
+          disabled={!selectedOpponent}
+        >
+          START GAME →
+        </button>
       </div>
-      
-      {/* Coming Soon Overlay */}
-      {showComingSoon && (
-        <div className="overlay">
-          <div className="overlay-content">
-            <h2 className="overlay-title">Coming Soon</h2>
-            <p className="overlay-text">Super Tac Toe is still in development. Stay tuned for this exciting new game mode!</p>
-            <button className="overlay-button" onClick={closeOverlay}>Close</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
