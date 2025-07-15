@@ -202,6 +202,22 @@
   animation: randomShake4 4.5s ease-in-out infinite;
 }
 
+/* Ensure decorative elements are properly positioned for Result page */
+.container .decorative-x, 
+.container .decorative-o {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.1 !important;
+  transition: none !important;
+}
+
+.container .decorative-x:hover, 
+.container .decorative-o:hover {
+  opacity: 0.1 !important;
+}
+
 /* Desktop optimized styles */
 .container {
   display: flex;

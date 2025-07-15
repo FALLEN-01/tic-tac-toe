@@ -79,10 +79,6 @@ export default function Result() {
           <h1 className="result-title">{resultDisplay.title}</h1>
           <p className="result-subtitle">{resultDisplay.subtitle}</p>
           
-          <div className="game-id">
-            🎯 Game ID: {gameId}
-          </div>
-          
           <div className="button-container">
             <button 
               onClick={handlePlayAgain}

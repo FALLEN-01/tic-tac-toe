@@ -267,6 +267,22 @@ body {
   animation: randomShake4 4.5s ease-in-out infinite;
 }
 
+/* Ensure decorative elements are properly positioned for Game page */
+.container .decorative-x, 
+.container .decorative-o {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.08 !important;
+  transition: none !important;
+}
+
+.container .decorative-x:hover, 
+.container .decorative-o:hover {
+  opacity: 0.08 !important;
+}
+
 /* Add decorative elements to game board screen */
 .main-card .decorative-x, .main-card .decorative-o {
   opacity: 0.05;
