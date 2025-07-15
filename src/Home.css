@@ -59,7 +59,7 @@ body {
   font-family: 'Arial', Helvetica, sans-serif;
   font-weight: bold;
   color: rgba(255, 255, 255, 0.08);
-  font-size: 3rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
   animation: float 6s ease-in-out infinite;
   user-select: none;
   pointer-events: none;
@@ -120,7 +120,7 @@ body {
 }
 
 .game-logo {
-  font-size: 4.5rem;
+  font-size: clamp(3.5rem, 8vw, 5rem);
   margin-bottom: 1.5rem;
   animation: pulse 3s ease-in-out infinite;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25));
@@ -137,7 +137,7 @@ body {
 
 .home-title {
   font-family: 'Annie Use Your Telescope', Helvetica, sans-serif;
-  font-size: 2.8rem;
+  font-size: clamp(2.2rem, 6vw, 3.2rem);
   font-weight: normal;
   margin-bottom: 1.5rem;
   text-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
@@ -147,7 +147,7 @@ body {
 }
 
 .home-subtitle {
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
   margin-bottom: 2.5rem;
   opacity: 0.9;
   max-width: 550px;
@@ -177,7 +177,7 @@ body {
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50px;
   color: white;
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.2px;
@@ -216,7 +216,7 @@ body {
 }
 
 .button-icon {
-  font-size: 1.2em;
+  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
   animation: bounce 2s infinite;
 }
 
@@ -574,29 +574,29 @@ body {
 }
 
 .game-logo {
-  font-size: 4.5rem;
+  font-size: clamp(3.5rem, 8vw, 5rem);
   margin-bottom: 1.5rem;
 }
 
 .home-title {
-  font-size: 2.8rem;
+  font-size: clamp(2.2rem, 6vw, 3.2rem);
   margin-bottom: 1.5rem;
 }
 
 .home-subtitle {
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
   margin-bottom: 2.5rem;
   max-width: 550px;
 }
 
 .button-content {
   padding: 1rem 2rem;
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
   gap: 0.6rem;
 }
 
 .floating-x, .floating-o {
-  font-size: 3rem;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
 }
 
 /* Responsive Design for Game Modes */

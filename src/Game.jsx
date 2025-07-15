@@ -12,7 +12,6 @@ export default function Game() {
   const [selectedOpponent, setSelectedOpponent] = useState(null);
   const [currentDifficulty, setCurrentDifficulty] = useState(3);
   const [gameStarted, setGameStarted] = useState(false);
-  const [showComingSoon, setShowComingSoon] = useState(false);
   
   // Game state
   const [board, setBoard] = useState(Array(9).fill(''));
@@ -27,16 +26,97 @@ export default function Game() {
   const difficultyNames = ['', 'Very Easy', 'Easy', 'Medium', 'Hard', 'Expert'];
   const difficultyColors = ['', 'blue', 'green', 'orange', 'red', 'purple'];
 
+  // Local game logic for friend play (using same logic as backend util.py)
+  const checkLocalWinner = (board) => {
+    const winConditions = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],  // rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],  // columns
+      [0, 4, 8], [2, 4, 6]              // diagonals
+    ];
+    
+    for (let condition of winConditions) {
+      const [a, b, c] = condition;
+      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+        return board[a];
+      }
+    }
+    
+    if (!board.includes('')) {
+      return 'draw';
+    }
+    
+    return null;
+  };
+
+  const makeLocalMove = (index) => {
+    const newBoard = [...board];
+    const newMoveHistory = [...moveHistory];
+    
+    // Make the move
+    newBoard[index] = currentPlayer;
+    newMoveHistory.push(index);
+    
+    // Handle decay mode
+    if (mode === 'decay' && newMoveHistory.length > 6) {
+      const oldMove = newMoveHistory.shift();
+      newBoard[oldMove] = '';
+    }
+    
+    setBoard(newBoard);
+    setMoveHistory(newMoveHistory);
+    
+    // Check for winner
+    const result = checkLocalWinner(newBoard);
+    if (result) {
+      if (result === 'draw') {
+        setGameStatus('draw');
+        setWinner('draw');
+      } else {
+        setGameStatus('won');
+        setWinner(result);
+      }
+      setWinningCells([]);
+    } else {
+      // Switch player
+      const nextPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      setCurrentPlayer(nextPlayer);
+      
+      // If playing against AI in local mode and it's AI's turn
+      if (selectedOpponent === 'ai' && gameMode === 'local' && nextPlayer === 'O') {
+        setTimeout(() => makeLocalAiMove(newBoard), 500);
+      }
+    }
+  };
+
+  const makeLocalAiMove = (currentBoard) => {
+    const availableMoves = currentBoard.map((cell, index) => cell === '' ? index : null).filter(val => val !== null);
+    if (availableMoves.length === 0) return;
+    
+    // Simple AI: random move for now
+    const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    
+    const newBoard = [...currentBoard];
+    newBoard[randomMove] = 'O';
+    setBoard(newBoard);
+    
+    // Check for winner
+    const result = checkLocalWinner(newBoard);
+    if (result) {
+      if (result === 'draw') {
+        setGameStatus('draw');
+        setWinner('draw');
+      } else {
+        setGameStatus('won');
+        setWinner(result);
+      }
+      setWinningCells([]);
+    } else {
+      setCurrentPlayer('X');
+    }
+  };
+
   const selectOpponent = (opponent) => {
     setSelectedOpponent(opponent);
-  };
-
-  const handleComingSoon = () => {
-    setShowComingSoon(true);
-  };
-
-  const closeComingSoon = () => {
-    setShowComingSoon(false);
   };
 
   const updateDifficulty = (value) => {
@@ -47,9 +127,49 @@ export default function Game() {
     if (!selectedOpponent) return;
     setGameStarted(true);
     
-    // Only AI games are supported now
-    if (selectedOpponent === 'ai') {
-      startNewGame();
+    if (selectedOpponent === 'friends') {
+      // Always use local mode for friends
+      setGameMode('local');
+      setPlayerSymbol('X');
+      resetGame();
+    } else if (selectedOpponent === 'ai') {
+      // Try API first, fallback to local if unavailable
+      tryStartApiGame();
+    }
+  };
+
+  const tryStartApiGame = async () => {
+    try {
+      const response = await fetch(`${API_URL}/start_game`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          player_symbol: 'X',
+          difficulty: currentDifficulty,
+          mode: 'regular'
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setGameId(data.game_id);
+        setPlayerSymbol(data.player_symbol);
+        setGameMode('api');
+        startNewGame();
+      } else {
+        // Fallback to local AI
+        console.log('API unavailable, falling back to local AI');
+        setGameMode('local');
+        setPlayerSymbol('X');
+        resetGame();
+      }
+    } catch (error) {
+      console.log('API unavailable, falling back to local AI:', error);
+      setGameMode('local');
+      setPlayerSymbol('X');
+      resetGame();
     }
   };
 
@@ -57,9 +177,10 @@ export default function Game() {
   const handleCellClick = (index) => {
     if (board[index] !== '' || gameStatus !== 'playing' || isAiTurn) return;
 
-    // Only AI games are supported
-    if (selectedOpponent === 'ai') {
+    if (gameMode === 'api' && selectedOpponent === 'ai') {
       makeMove(index);
+    } else if (gameMode === 'local') {
+      makeLocalMove(index);
     }
   };
 
@@ -269,7 +390,12 @@ export default function Game() {
               <div className="status-message">{getStatusMessage()}</div>
               {selectedOpponent === 'ai' && (
                 <div className="ai-difficulty">
-                  AI Difficulty: {difficultyNames[currentDifficulty]}
+                  {gameMode === 'api' ? `AI Difficulty: ${difficultyNames[currentDifficulty]}` : 'Local AI (Fallback)'}
+                </div>
+              )}
+              {selectedOpponent === 'friends' && (
+                <div className="ai-difficulty">
+                  Local Multiplayer
                 </div>
               )}
             </div>
@@ -358,8 +484,8 @@ export default function Game() {
           <div className="option-cards-container">
             <div className="option-card">
               <button 
-                className="option-button"
-                onClick={handleComingSoon}
+                className={`option-button ${selectedOpponent === 'friends' ? 'selected' : ''}`}
+                onClick={() => selectOpponent('friends')}
               >
                 <div className="option-content">
                   <div className="option-icon">👥</div>
@@ -443,17 +569,6 @@ export default function Game() {
           START GAME →
         </button>
       </div>
-
-      {/* Coming Soon Modal */}
-      {showComingSoon && (
-        <div className="game-over-overlay">
-          <div className="overlay-content">
-            <h2 className="overlay-title">Coming Soon</h2>
-            <p className="overlay-text">Local multiplayer is still in development. Stay tuned for this exciting feature!</p>
-            <button className="btn btn-primary" onClick={closeComingSoon}>Close</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
