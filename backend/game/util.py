@@ -15,9 +15,6 @@ def check_winner(board: List[str]):
         return "draw"
     return None
 
-
-
-
 def available_moves(board: List[str]):
     return [i for i in range(9) if board[i] == ""]
 
