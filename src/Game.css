@@ -41,12 +41,10 @@ body {
 
 /* Title */
 .title-container {
-  position: absolute;
-  top: 4vh;
-  left: 0;
   width: 100%;
   padding: 0 6vw;
   z-index: 10;
+  margin-bottom: 2rem;
 }
 
 .main-title {
@@ -104,10 +102,6 @@ body {
 
 /* Opponent Cards Container - Centered with equal spacing */
 .opponent-cards-container {
-  position: absolute;
-  top: 25vh;
-  left: 50vw;
-  transform: translateX(-50%);
   width: min(70vw, 600px);
   display: flex;
   flex-direction: row;
@@ -115,6 +109,7 @@ body {
   z-index: 10;
   justify-content: center;
   align-items: center;
+  margin: 2rem auto;
 }
 
 /* Opponent Cards - Equal square boxes */
@@ -212,12 +207,8 @@ body {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* AI Difficulty Slider - Spans full width of both boxes */
+/* AI Difficulty Slider - Same layer as opponent boxes, positioned below */
 .difficulty-slider-container {
-  position: absolute;
-  top: 45vh;
-  left: 50vw;
-  transform: translateX(-50%);
   width: min(70vw, 600px);
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(15px);
@@ -227,6 +218,7 @@ body {
   z-index: 10;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   animation: slideIn 0.3s ease-out;
+  margin: 2rem auto 0;
 }
 
 /* Difficulty Slider - Enhanced design */
@@ -466,11 +458,13 @@ body {
   height: 360px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   gap: 12px;
   padding: 12px;
   margin: 0 auto;
   border-radius: 12px;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .cell {
@@ -741,7 +735,6 @@ body {
   
   .difficulty-slider-container {
     width: min(80vw, 500px);
-    top: 47vh;
   }
 }
 
@@ -767,9 +760,7 @@ body {
     flex-direction: column;
     gap: 20px;
     width: min(80vw, 300px);
-    top: 15vh;
-    position: relative;
-    margin-bottom: 2rem;
+    margin: 1.5rem auto;
   }
   
   .opponent-card {
@@ -792,11 +783,9 @@ body {
   }
   
   .difficulty-slider-container {
-    position: relative;
-    top: auto;
     width: min(80vw, 300px);
     padding: 1.5rem;
-    margin-bottom: 2rem;
+    margin: 1.5rem auto;
   }
   
   .game-info-integrated {

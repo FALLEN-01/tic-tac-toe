@@ -10,7 +10,13 @@ app = FastAPI()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://tic-tac-toe-umber-ten.vercel.app/", "http://127.0.0.1:5000"],  # Frontend URL
+    allow_origins=[
+        "https://tic-tac-toe-umber-ten.vercel.app", 
+        "http://127.0.0.1:5000",
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "*"  # Allow all origins for development
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -28,7 +34,9 @@ def new_game(req: NewGameRequest):
         ai_move = best_move(board, "X", depth, turn=True)
         board[ai_move] = "X"
         
-    result = check_winner(board) or "in progress"
+    result = check_winner(board)
+    if result is None:
+        result = "in_progress"
     
     return NewGameResponse(
         player_symbol = player_symbol,
