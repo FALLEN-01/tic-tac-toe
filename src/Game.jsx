@@ -99,7 +99,7 @@ export default function Game() {
   };
 
   // API calls to FastAPI backend
-  const API_BASE_URL = 'http://localhost:8000'; // Adjust this to your FastAPI server URL
+  const API_BASE_URL = 'http://localhost:8000'; // FastAPI backend URL
 
   const startNewGame = async () => {
     try {
@@ -218,20 +218,20 @@ export default function Game() {
   const getStatusMessage = () => {
     if (gameStatus === 'won') {
       if (selectedOpponent === 'ai') {
-        return winner === 'X' ? 'You Won!' : 'AI Won!';
+        return winner === 'X' ? '🎉 You Won!' : '🤖 AI Won!';
       }
-      return `Player ${winner} Won!`;
+      return `🎉 Player ${winner} Won!`;
     }
     if (gameStatus === 'draw') {
-      return "It's a Draw!";
+      return "🤝 It's a Draw!";
     }
     if (isAiTurn) {
-      return 'AI is thinking...';
+      return '🤔 AI is thinking...';
     }
     if (selectedOpponent === 'ai') {
-      return currentPlayer === 'X' ? 'Your Turn' : 'AI Turn';
+      return currentPlayer === 'X' ? '👤 Your Turn' : '🤖 AI Turn';
     }
-    return `Player ${currentPlayer}'s Turn`;
+    return `👤 Player ${currentPlayer}'s Turn`;
   };
 
   const getGlowClass = () => {
@@ -246,12 +246,18 @@ export default function Game() {
   // Show game board if game has started
   if (gameStarted) {
     return (
-      <div className="game-container">
-        <div className="content">
+      <div className="container">
+        <div className="main-card">
           {/* Title */}
-          <div className="title">
-            <h1>Tic Tac Toe</h1>
+          <div className="title-container">
+            <h1 className="main-title">Tic Tac Toe</h1>
           </div>
+
+          {/* Decorative Elements */}
+          <div className="decorative-x decorative-x-1">X</div>
+          <div className="decorative-o decorative-o-1">O</div>
+          <div className="decorative-x decorative-x-2">X</div>
+          <div className="decorative-o decorative-o-2">O</div>
 
           {/* Game Info */}
           <div className="game-info">
@@ -271,7 +277,7 @@ export default function Game() {
               {board.map((cell, index) => (
                 <button
                   key={index}
-                  className={`cell ${winningCells.includes(index) ? 'winning' : ''}`}
+                  className={`cell ${winningCells.includes(index) ? 'winning' : ''} ${isAiTurn ? 'ai-thinking' : ''}`}
                   onClick={() => handleCellClick(index)}
                   disabled={cell !== '' || gameStatus !== 'playing' || isAiTurn}
                 >
@@ -279,6 +285,9 @@ export default function Game() {
                     <span className={cell.toLowerCase()}>
                       {cell}
                     </span>
+                  )}
+                  {isAiTurn && cell === '' && (
+                    <div className="thinking-indicator">⏳</div>
                   )}
                 </button>
               ))}
