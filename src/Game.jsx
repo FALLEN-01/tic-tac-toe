@@ -23,6 +23,7 @@ export default function Game() {
   const [winningCells, setWinningCells] = useState([]);
   const [isAiTurn, setIsAiTurn] = useState(false);
   const [moveHistory, setMoveHistory] = useState([]);
+  const [isProcessingMove, setIsProcessingMove] = useState(false);
 
   const difficultyNames = ['', 'Very Easy', 'Easy', 'Medium', 'Hard', 'Expert'];
   const difficultyColors = ['', 'blue', 'green', 'orange', 'red', 'purple'];
@@ -69,14 +70,17 @@ export default function Game() {
     // Check for winner
     const result = checkLocalWinner(newBoard);
     if (result) {
-      if (result === 'draw') {
-        setGameStatus('draw');
-        setWinner('draw');
-      } else {
-        setGameStatus('won');
-        setWinner(result);
-      }
-      setWinningCells([]);
+      // Add delay before showing result modal
+      setTimeout(() => {
+        if (result === 'draw') {
+          setGameStatus('draw');
+          setWinner('draw');
+        } else {
+          setGameStatus('won');
+          setWinner(result);
+        }
+        setWinningCells([]);
+      }, 800); // 800ms delay to see the final move
     } else {
       // Switch player
       const nextPlayer = currentPlayer === 'X' ? 'O' : 'X';
@@ -84,7 +88,7 @@ export default function Game() {
       
       // If playing against AI in local mode and it's AI's turn
       if (selectedOpponent === 'ai' && gameMode === 'local' && nextPlayer === 'O') {
-        setTimeout(() => makeLocalAiMove(newBoard), 500);
+        setTimeout(() => makeLocalAiMove(newBoard), 1000); // 1 second delay for AI move
       }
     }
   };
@@ -103,14 +107,17 @@ export default function Game() {
     // Check for winner
     const result = checkLocalWinner(newBoard);
     if (result) {
-      if (result === 'draw') {
-        setGameStatus('draw');
-        setWinner('draw');
-      } else {
-        setGameStatus('won');
-        setWinner(result);
-      }
-      setWinningCells([]);
+      // Add delay before showing result modal
+      setTimeout(() => {
+        if (result === 'draw') {
+          setGameStatus('draw');
+          setWinner('draw');
+        } else {
+          setGameStatus('won');
+          setWinner(result);
+        }
+        setWinningCells([]);
+      }, 800); // 800ms delay to see the AI's final move
     } else {
       setCurrentPlayer('X');
     }
@@ -164,17 +171,25 @@ export default function Game() {
     setWinningCells([]);
     setIsAiTurn(false);
     setMoveHistory([]);
+    setIsProcessingMove(false);
   };
 
   // Handle cell click in game
   const handleCellClick = (index) => {
-    if (board[index] !== '' || gameStatus !== 'playing' || isAiTurn) return;
+    if (board[index] !== '' || gameStatus !== 'playing' || isAiTurn || isProcessingMove) return;
 
-    if (gameMode === 'api' && selectedOpponent === 'ai') {
-      makeMove(index);
-    } else if (gameMode === 'local') {
-      makeLocalMove(index);
-    }
+    // Set processing state for visual feedback
+    setIsProcessingMove(true);
+
+    // Add a small delay to make the move feel more natural
+    setTimeout(() => {
+      if (gameMode === 'api' && selectedOpponent === 'ai') {
+        makeMove(index);
+      } else if (gameMode === 'local') {
+        makeLocalMove(index);
+      }
+      setIsProcessingMove(false);
+    }, 150); // 150ms delay for natural feel
   };
 
   // Reset game
@@ -197,6 +212,7 @@ export default function Game() {
     setWinningCells([]);
     setIsAiTurn(false);
     setMoveHistory([]);
+    setIsProcessingMove(false);
   };
 
   const goBack = () => {
@@ -245,12 +261,17 @@ export default function Game() {
 
     if (gameData.result === 'in progress' || gameData.result === 'in_progress') {
       setGameStatus('playing');
-    } else if (gameData.result === 'draw') {
-      setGameStatus('draw');
-      setWinner('draw');
     } else {
-      setGameStatus('won');
-      setWinner(gameData.result);
+      // Add delay before showing result modal for API games
+      setTimeout(() => {
+        if (gameData.result === 'draw') {
+          setGameStatus('draw');
+          setWinner('draw');
+        } else {
+          setGameStatus('won');
+          setWinner(gameData.result);
+        }
+      }, 800); // 800ms delay to see the final move
     }
 
     if (!gameData.your_turn && selectedOpponent === 'ai') {
@@ -302,15 +323,20 @@ export default function Game() {
 
     if (gameData.result === 'in progress' || gameData.result === 'in_progress') {
       setGameStatus('playing');
-    } else if (gameData.result === 'draw') {
-      setGameStatus('draw');
-      setWinner('draw');
+      setIsAiTurn(!gameData.your_turn);
     } else {
-      setGameStatus('won');
-      setWinner(gameData.result);
+      // Add delay before showing result modal for API moves
+      setTimeout(() => {
+        if (gameData.result === 'draw') {
+          setGameStatus('draw');
+          setWinner('draw');
+        } else {
+          setGameStatus('won');
+          setWinner(gameData.result);
+        }
+        setIsAiTurn(false);
+      }, 800); // 800ms delay to see the final move
     }
-
-    setIsAiTurn(!gameData.your_turn);
 
   } catch (error) {
     console.error('Error making move:', error);
@@ -387,16 +413,16 @@ export default function Game() {
               {board.map((cell, index) => (
                 <button
                   key={index}
-                  className={`cell ${winningCells.includes(index) ? 'winning' : ''} ${isAiTurn ? 'ai-thinking' : ''}`}
+                  className={`cell ${winningCells.includes(index) ? 'winning' : ''} ${isAiTurn || isProcessingMove ? 'ai-thinking' : ''}`}
                   onClick={() => handleCellClick(index)}
-                  disabled={cell !== '' || gameStatus !== 'playing' || isAiTurn}
+                  disabled={cell !== '' || gameStatus !== 'playing' || isAiTurn || isProcessingMove}
                 >
                   {cell && (
                     <span className={cell.toLowerCase()}>
                       {cell}
                     </span>
                   )}
-                  {isAiTurn && cell === '' && (
+                  {(isAiTurn || isProcessingMove) && cell === '' && (
                     <div className="thinking-indicator">⏳</div>
                   )}
                 </button>
