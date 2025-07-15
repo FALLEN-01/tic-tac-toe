@@ -114,13 +114,27 @@ export default function Home() {
 
   return (
     <div className="home-container">
-      <div className="decorative-background">
-        <div className="floating-x floating-x-1">X</div>
-        <div className="floating-o floating-o-1">O</div>
-        <div className="floating-x floating-x-2">X</div>
-        <div className="floating-o floating-o-2">O</div>
-        <div className="floating-x floating-x-3">X</div>
-      </div>
+      {/* Decorative Elements */}
+      <div className="decorative-x decorative-x-1">X</div>
+      <div className="decorative-o decorative-o-1">O</div>
+      <div className="decorative-x decorative-x-2">X</div>
+      <div className="decorative-o decorative-o-2">O</div>
+      <div className="decorative-x decorative-x-3">X</div>
+      <div className="decorative-o decorative-o-3">O</div>
+      <div className="decorative-x decorative-x-4">X</div>
+      <div className="decorative-o decorative-o-4">O</div>
+      <div className="decorative-x decorative-x-5">X</div>
+      <div className="decorative-o decorative-o-5">O</div>
+      <div className="decorative-x decorative-x-6">X</div>
+      <div className="decorative-o decorative-o-6">O</div>
+      <div className="decorative-x decorative-x-7">X</div>
+      <div className="decorative-o decorative-o-7">O</div>
+      <div className="decorative-x decorative-x-8">X</div>
+      <div className="decorative-o decorative-o-8">O</div>
+      <div className="decorative-x decorative-x-9">X</div>
+      <div className="decorative-o decorative-o-9">O</div>
+      <div className="decorative-x decorative-x-10">X</div>
+      <div className="decorative-o decorative-o-10">O</div>
       
       <div className="main-content">
         <div className="game-logo">🎯</div>
