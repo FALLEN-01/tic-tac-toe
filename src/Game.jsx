@@ -21,9 +21,66 @@ export default function Game() {
   const [winner, setWinner] = useState(null);
   const [winningCells, setWinningCells] = useState([]);
   const [isAiTurn, setIsAiTurn] = useState(false);
+  const [moveHistory, setMoveHistory] = useState([]);
 
   const difficultyNames = ['', 'Very Easy', 'Easy', 'Medium', 'Hard', 'Expert'];
   const difficultyColors = ['', 'blue', 'green', 'orange', 'red', 'purple'];
+
+  // Local game logic for friend play
+  const checkLocalWinner = (board) => {
+    const winConditions = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],  // rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],  // columns
+      [0, 4, 8], [2, 4, 6]              // diagonals
+    ];
+    
+    for (let condition of winConditions) {
+      const [a, b, c] = condition;
+      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+        return { winner: board[a], winningCells: condition };
+      }
+    }
+    
+    if (!board.includes('')) {
+      return { winner: 'draw', winningCells: [] };
+    }
+    
+    return null;
+  };
+
+  const makeLocalMove = (index) => {
+    const newBoard = [...board];
+    const newMoveHistory = [...moveHistory];
+    
+    // Make the move
+    newBoard[index] = currentPlayer;
+    newMoveHistory.push(index);
+    
+    // Handle decay mode
+    if (mode === 'decay' && newMoveHistory.length > 6) {
+      const oldMove = newMoveHistory.shift();
+      newBoard[oldMove] = '';
+    }
+    
+    setBoard(newBoard);
+    setMoveHistory(newMoveHistory);
+    
+    // Check for winner
+    const result = checkLocalWinner(newBoard);
+    if (result) {
+      if (result.winner === 'draw') {
+        setGameStatus('draw');
+        setWinner('draw');
+      } else {
+        setGameStatus('won');
+        setWinner(result.winner);
+        setWinningCells(result.winningCells);
+      }
+    } else {
+      // Switch player
+      setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
+    }
+  };
 
   const selectOpponent = (opponent) => {
     setSelectedOpponent(opponent);
@@ -37,20 +94,54 @@ export default function Game() {
     if (!selectedOpponent) return;
     setGameStarted(true);
     
-    // Start a new game with the backend for both AI and friend games
-    startNewGame();
+    // Initialize local state for friend games
+    if (selectedOpponent === 'friends') {
+      setBoard(Array(9).fill(''));
+      setCurrentPlayer('X');
+      setPlayerSymbol('X');
+      setGameStatus('playing');
+      setWinner(null);
+      setWinningCells([]);
+      setIsAiTurn(false);
+      setMoveHistory([]);
+    } else {
+      // Start a new game with the backend for AI games
+      startNewGame();
+    }
   };
 
   // Handle cell click in game
   const handleCellClick = (index) => {
     if (board[index] !== '' || gameStatus !== 'playing' || isAiTurn) return;
 
-    // Make move via API for AI games, or locally for friend games
-    makeMove(index);
+    // Use local logic for friend games, API for AI games
+    if (selectedOpponent === 'friends') {
+      makeLocalMove(index);
+    } else {
+      makeMove(index);
+    }
   };
 
   // Reset game
   const resetGame = () => {
+    setBoard(Array(9).fill(''));
+    setCurrentPlayer('X');
+    setPlayerSymbol('X');
+    setGameStatus('playing');
+    setWinner(null);
+    setWinningCells([]);
+    setIsAiTurn(false);
+    setMoveHistory([]);
+    
+    // Start a new game with the backend for AI games, local for friend games
+    if (selectedOpponent === 'ai') {
+      startNewGame();
+    }
+  };
+
+  // Go back to opponent selection
+  const goBackToSelection = () => {
+    setGameStarted(false);
     setBoard(Array(9).fill(''));
     setCurrentPlayer('X');
     setPlayerSymbol('');
@@ -58,15 +149,7 @@ export default function Game() {
     setWinner(null);
     setWinningCells([]);
     setIsAiTurn(false);
-    
-    // Start a new game with the backend for both AI and friend games
-    startNewGame();
-  };
-
-  // Go back to opponent selection
-  const goBackToSelection = () => {
-    setGameStarted(false);
-    resetGame();
+    setMoveHistory([]);
   };
 
   const goBack = () => {
@@ -106,6 +189,7 @@ export default function Game() {
       setBoard(gameData.board);
       setCurrentPlayer(gameData.player_symbol);
       setPlayerSymbol(gameData.player_symbol);
+      setMoveHistory(gameData.move_history || []);
       
       // Use API response directly for game status
       if (gameData.result === 'in_progress') {
@@ -149,7 +233,8 @@ export default function Game() {
           player_symbol: currentPlayer,
           ai_enabled: selectedOpponent === 'ai',
           depth: currentDifficulty,
-          mode: mode
+          mode: mode,
+          move_history: moveHistory
         }),
       });
       
@@ -159,6 +244,7 @@ export default function Game() {
       
       const gameData = await response.json();
       setBoard(gameData.board);
+      setMoveHistory(gameData.move_history || []);
       
       // Use API response directly for game status
       if (gameData.result === 'in_progress') {
@@ -193,8 +279,10 @@ export default function Game() {
       if (selectedOpponent === 'ai') {
         // Check if the winner is the player's symbol or not
         return winner === playerSymbol ? '🎉 You Won!' : '🤖 AI Won!';
+      } else {
+        // Local multiplayer
+        return `🎉 Player ${winner} Won!`;
       }
-      return `🎉 Player ${winner} Won!`;
     }
     if (gameStatus === 'draw') {
       return "🤝 It's a Draw!";
@@ -323,42 +411,6 @@ export default function Game() {
         <div className="decorative-o decorative-o-1">O</div>
         <div className="decorative-x decorative-x-2">X</div>
         <div className="decorative-o decorative-o-2">O</div>
-
-        {/* Game Mode Selection */}
-        <div className="selection-section">
-          <h2 className="section-title">Choose Game Mode</h2>
-          <div className="option-cards-container">
-            <div className="option-card">
-              <button 
-                className="option-button"
-                onClick={() => alert('Mode already selected from Home')}
-              >
-                <div className="option-content">
-                  <div className="option-icon">⭕</div>
-                  <div className="option-text">
-                    <h3 className="option-title">Tic Tac Toe</h3>
-                    <p className="option-description">The classic game you know and love</p>
-                  </div>
-                </div>
-              </button>
-            </div>
-
-            <div className="option-card">
-              <button 
-                className="option-button"
-                onClick={() => alert('Mode already selected from Home')}
-              >
-                <div className="option-content">
-                  <div className="option-icon">�</div>
-                  <div className="option-text">
-                    <h3 className="option-title">Decay Tac Toe</h3>
-                    <p className="option-description">Pieces disappear over time</p>
-                  </div>
-                </div>
-              </button>
-            </div>
-          </div>
-        </div>
 
         {/* Opponent Selection */}
         <div className="selection-section">
