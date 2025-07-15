@@ -69,12 +69,12 @@ export default function Home() {
               </button>
             </div>
             
-            {/* Super Tac Toe Card */}
+            {/* Ultimate Tic Tac Toe Card */}
             <div className="game-card">
               <button className="game-button" onClick={handleComingSoon}>
                 <div className="game-content">
                   <div className="game-icon star-icon">⭐</div>
-                  <h2 className="game-title">Super Tac Toe</h2>
+                  <h2 className="game-title">Ultimate Tic Tac Toe</h2>
                   <p className="game-description">The ultimate challenge with multiple grids and advanced mechanics.</p>
                 </div>
               </button>
@@ -90,7 +90,7 @@ export default function Home() {
           <div className="overlay">
             <div className="overlay-content">
               <h2 className="overlay-title">Coming Soon</h2>
-              <p className="overlay-text">Super Tac Toe is still in development. Stay tuned for this exciting new game mode!</p>
+              <p className="overlay-text">Ultimate Tic Tac Toe is still in development. Stay tuned for this exciting new game mode!</p>
               <button className="overlay-button" onClick={closeOverlay}>Close</button>
             </div>
           </div>

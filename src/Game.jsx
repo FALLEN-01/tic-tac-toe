@@ -12,6 +12,7 @@ export default function Game() {
   const [selectedOpponent, setSelectedOpponent] = useState(null);
   const [currentDifficulty, setCurrentDifficulty] = useState(3);
   const [gameStarted, setGameStarted] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(false);
   
   // Game state
   const [board, setBoard] = useState(Array(9).fill(''));
@@ -86,6 +87,14 @@ export default function Game() {
     setSelectedOpponent(opponent);
   };
 
+  const handleComingSoon = () => {
+    setShowComingSoon(true);
+  };
+
+  const closeComingSoon = () => {
+    setShowComingSoon(false);
+  };
+
   const updateDifficulty = (value) => {
     setCurrentDifficulty(parseInt(value));
   };
@@ -94,18 +103,8 @@ export default function Game() {
     if (!selectedOpponent) return;
     setGameStarted(true);
     
-    // Initialize local state for friend games
-    if (selectedOpponent === 'friends') {
-      setBoard(Array(9).fill(''));
-      setCurrentPlayer('X');
-      setPlayerSymbol('X');
-      setGameStatus('playing');
-      setWinner(null);
-      setWinningCells([]);
-      setIsAiTurn(false);
-      setMoveHistory([]);
-    } else {
-      // Start a new game with the backend for AI games
+    // Only AI games are supported now
+    if (selectedOpponent === 'ai') {
       startNewGame();
     }
   };
@@ -114,10 +113,8 @@ export default function Game() {
   const handleCellClick = (index) => {
     if (board[index] !== '' || gameStatus !== 'playing' || isAiTurn) return;
 
-    // Use local logic for friend games, API for AI games
-    if (selectedOpponent === 'friends') {
-      makeLocalMove(index);
-    } else {
+    // Only AI games are supported
+    if (selectedOpponent === 'ai') {
       makeMove(index);
     }
   };
@@ -133,7 +130,7 @@ export default function Game() {
     setIsAiTurn(false);
     setMoveHistory([]);
     
-    // Start a new game with the backend for AI games, local for friend games
+    // Only AI games are supported
     if (selectedOpponent === 'ai') {
       startNewGame();
     }
@@ -402,7 +399,7 @@ export default function Game() {
         <div className="title-container">
           <h1 className="main-title">Choose Your Opponent</h1>
           <p className="game-mode-display">
-            Playing: <span className="selected-mode">{mode === 'classic' ? 'Tic Tac Toe' : mode === 'decay' ? 'Decay Tac Toe' : mode}</span>
+            Playing: <span className="selected-mode">{mode === 'classic' ? 'Tic Tac Toe' : mode === 'decay' ? 'Decay Tac Toe' : 'Tic Tac Toe'}</span>
           </p>
         </div>
 
@@ -417,8 +414,8 @@ export default function Game() {
           <div className="option-cards-container">
             <div className="option-card">
               <button 
-                className={`option-button ${selectedOpponent === 'friends' ? 'selected' : ''}`}
-                onClick={() => selectOpponent('friends')}
+                className="option-button"
+                onClick={handleComingSoon}
               >
                 <div className="option-content">
                   <div className="option-icon">👥</div>
@@ -502,6 +499,17 @@ export default function Game() {
           START GAME →
         </button>
       </div>
+
+      {/* Coming Soon Modal */}
+      {showComingSoon && (
+        <div className="game-over-overlay">
+          <div className="overlay-content">
+            <h2 className="overlay-title">Coming Soon</h2>
+            <p className="overlay-text">Local multiplayer is still in development. Stay tuned for this exciting feature!</p>
+            <button className="btn btn-primary" onClick={closeComingSoon}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
