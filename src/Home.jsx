@@ -79,7 +79,7 @@ export default function Home() {
           </div>
           
           {/* Back Button */}
-          <button className="back-button" onClick={goBackToHome}>← BACK</button>
+          <button className="btn btn-back" onClick={goBackToHome}>← BACK</button>
         </div>
         
         {/* Coming Soon Overlay */}
