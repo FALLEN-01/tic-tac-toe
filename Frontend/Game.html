@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Twist Tac Toe - Game Modes</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css?family=Annie+Use+Your+Telescope:400");
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Main Card Container -->
+    <div class="main-card">
+      <!-- Title -->
+      <div class="title-container">
+        <h1 class="main-title">Game Modes</h1>
+      </div>
+      <!-- Decorative Elements -->
+      <div class="decorative-x decorative-x-1">X</div>
+      <div class="decorative-o decorative-o-1">O</div>
+      <div class="decorative-x decorative-x-2">X</div>
+      <div class="decorative-o decorative-o-2">O</div>
+      <!-- Game Mode Cards -->
+      <div class="game-modes-container">
+        <!-- Tic Tac Toe Card -->
+        <div class="game-card">
+          <button class="game-button" onclick="selectGameMode('classic')">
+            <div class="game-content">
+              <div class="game-icon red-icon">⭕</div>
+              <h2 class="game-title">Tic Tac Toe</h2>
+              <p class="game-description">The classic game you know and love. Simple rules, timeless fun.</p>
+            </div>
+          </button>
+        </div>
+        <!-- Decay Tac Toe Card -->
+        <div class="game-card">
+          <button class="game-button" onclick="selectGameMode('decay')">
+            <div class="game-content">
+              <div class="game-icon yellow-icon">😵</div>
+              <h2 class="game-title">Decay Tac Toe</h2>
+              <p class="game-description">Pieces disappear over time! Plan your moves carefully before they fade away.</p>
+            </div>
+          </button>
+        </div>
+        <!-- Super Tac Toe Card -->
+        <div class="game-card">
+          <button class="game-button" onclick="showComingSoon()">
+            <div class="game-content">
+              <div class="game-icon star-icon">⭐</div>
+              <h2 class="game-title">Super Tac Toe</h2>
+              <p class="game-description">The ultimate challenge with multiple grids and advanced mechanics.</p>
+            </div>
+          </button>
+        </div>
+      </div>
+      <!-- Back Button -->
+      <button class="back-button" onclick="goBack()">← BACK</button>
+    </div>
+    <!-- Coming Soon Overlay -->
+    <div id="comingSoonOverlay" class="overlay hidden">
+      <div class="overlay-content">
+        <h2 class="overlay-title">Coming Soon</h2>
+        <p class="overlay-text">Super Tac Toe is still in development. Stay tuned for this exciting new game mode!</p>
+        <button class="overlay-button" onclick="closeOverlay()">Close</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    function selectGameMode(mode) {
+      // Navigate to Desktop 7 with selected mode
+      window.location.href = `/desktop7?mode=${mode}`;
+    }
+    function showComingSoon() {
+      document.getElementById('comingSoonOverlay').classList.remove('hidden');
+    }
+    function closeOverlay() {
+      document.getElementById('comingSoonOverlay').classList.add('hidden');
+    }
+    function goBack() {
+      window.location.href = '/';
+    }
+  </script>
+</body>
+</html>
