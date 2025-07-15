@@ -1,56 +1,147 @@
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import "./Game.css";
 
 export default function Game() {
   const navigate = useNavigate();
-  const { gameId } = useParams(); // if you’re using dynamic routes like /game/:gameId
+  const { gameId } = useParams();
+  const [board, setBoard] = useState(Array(9).fill(null));
+  const [currentPlayer, setCurrentPlayer] = useState('X');
+  const [gameStatus, setGameStatus] = useState('playing'); // 'playing', 'won', 'draw'
+  const [winner, setWinner] = useState(null);
 
-  // Define the decorative X and O elements data
-  const decorativeElements = [
-    { type: "X", position: "top-[61px] left-3", opacity: "opacity-10" },
-    { type: "O", position: "top-[232px] left-[1130px]", opacity: "opacity-10" },
-    { type: "X", position: "top-[820px] left-[1157px]", opacity: "opacity-10" },
-    { type: "O", position: "top-[648px] left-[204px]", opacity: "opacity-10" },
-  ];
+  const winningCombinations = useMemo(() => [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+    [0, 4, 8], [2, 4, 6] // diagonals
+  ], []);
 
-  const handlePlayClick = () => {
-    // Navigate to result page after game completion
-    navigate(`/result/${gameId}`);
+  useEffect(() => {
+    const checkWinner = (boardToCheck) => {
+      for (let combination of winningCombinations) {
+        const [a, b, c] = combination;
+        if (boardToCheck[a] && boardToCheck[a] === boardToCheck[b] && boardToCheck[a] === boardToCheck[c]) {
+          return boardToCheck[a];
+        }
+      }
+      return null;
+    };
+
+    const checkDraw = (boardToCheck) => {
+      return boardToCheck.every(cell => cell !== null);
+    };
+
+    const gameWinner = checkWinner(board);
+    if (gameWinner) {
+      setWinner(gameWinner);
+      setGameStatus('won');
+      // Auto-navigate to result after 2 seconds
+      setTimeout(() => {
+        navigate(`/result/${gameId}?winner=${gameWinner}`);
+      }, 2000);
+    } else if (checkDraw(board)) {
+      setGameStatus('draw');
+      // Auto-navigate to result after 2 seconds
+      setTimeout(() => {
+        navigate(`/result/${gameId}?result=draw`);
+      }, 2000);
+    }
+  }, [board, gameId, navigate, winningCombinations]);
+
+  const handleCellClick = (index) => {
+    if (board[index] || gameStatus !== 'playing') return;
+
+    const newBoard = [...board];
+    newBoard[index] = currentPlayer;
+    setBoard(newBoard);
+    setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
+  };
+
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
+    setCurrentPlayer('X');
+    setGameStatus('playing');
+    setWinner(null);
+  };
+
+  const goHome = () => {
+    navigate('/');
+  };
+
+  const renderCell = (index) => {
+    const value = board[index];
+    let cellClass = 'game-cell';
+    
+    if (value === 'X') {
+      cellClass += ' cell-x';
+    } else if (value === 'O') {
+      cellClass += ' cell-o';
+    }
+
+    return (
+      <button
+        key={index}
+        className={cellClass}
+        onClick={() => handleCellClick(index)}
+        disabled={gameStatus !== 'playing'}
+      >
+        {value === 'X' && '❌'}
+        {value === 'O' && '⭕'}
+      </button>
+    );
   };
 
   return (
-    <div className="bg-white flex flex-row justify-center w-full">
-      <div className="w-[1440px] h-[1024px] relative bg-[linear-gradient(135deg,rgba(102,126,234,1)_0%,rgba(118,75,162,1)_100%)] border-0">
-        <div className="p-0">
-          {/* Main title */}
-          <div className="absolute w-[1244px] h-[334px] top-28 left-[157px]">
-            <h1 className="absolute w-[1187px] top-0 left-0 opacity-90 font-normal text-white text-[80px] text-center tracking-[0] leading-normal">
-              WELCOME TO TWIST TAC TOE
-            </h1>
-          </div>
+    <div className="game-container">
+      <div className="game-background">
+        {/* Header */}
+        <div className="game-header">
+          <h1 className="game-title">🎯 TWIST TAC TOE</h1>
+          <button onClick={goHome} className="home-button">🏠 Home</button>
+        </div>
 
-          {/* Decorative X and O elements */}
-          {decorativeElements.map((element, index) => (
-            <div
-              key={`element-${index}`}
-              className={`absolute w-[114px] ${element.position} ${element.opacity} font-normal text-white text-[80px] text-center tracking-[0] leading-normal`}
-            >
-              {element.type}
-            </div>
-          ))}
+        {/* Game Status */}
+        <div className="game-status">
+          {gameStatus === 'playing' && (
+            <p className="status-text">
+              Current Player: <span className={`player ${currentPlayer.toLowerCase()}`}>
+                {currentPlayer === 'X' ? '❌' : '⭕'} {currentPlayer}
+              </span>
+            </p>
+          )}
+          {gameStatus === 'won' && (
+            <p className="status-text winner">
+              🎉 Player {winner === 'X' ? '❌' : '⭕'} {winner} Wins! 🎉
+            </p>
+          )}
+          {gameStatus === 'draw' && (
+            <p className="status-text draw">
+              🤝 It's a Draw! 🤝
+            </p>
+          )}
+        </div>
 
-          {/* Play button */}
-          <button
-            onClick={handlePlayClick}
-            aria-label="Play game"
-            className="absolute w-[121px] h-48 top-[472px] left-[736px] focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-transform hover:scale-110"
-          >
-            <img
-              className="w-full h-full"
-              alt="Play button"
-              src="/figmaAssets/polygon-1.svg"
-            />
+        {/* Game Board */}
+        <div className="game-board">
+          {Array(9).fill(null).map((_, index) => renderCell(index))}
+        </div>
+
+        {/* Game Controls */}
+        <div className="game-controls">
+          <button onClick={resetGame} className="control-button reset">
+            🔄 Reset Game
           </button>
+          <button 
+            onClick={() => navigate(`/result/${gameId}`)} 
+            className="control-button finish"
+          >
+            🏁 Finish Game
+          </button>
+        </div>
+
+        {/* Game Info */}
+        <div className="game-info">
+          <p>Game ID: {gameId}</p>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "./Home.css";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -11,22 +12,17 @@ export default function Home() {
   };
 
   return (
-    <div style={{ textAlign: "center", paddingTop: "50px" }}>
-      <h1>Home Page</h1>
+    <div className="home-container">
+      <div className="game-logo">🎯</div>
+      <h1 className="home-title">TWIST TAC TOE</h1>
+      <p className="home-subtitle">
+        🎮 Experience the classic tic-tac-toe game with a modern twist! 🚀
+      </p>
       <button 
         onClick={handleStartGame}
-        style={{
-          padding: "10px 20px",
-          fontSize: "18px",
-          backgroundColor: "#4CAF50",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-          marginTop: "20px"
-        }}
+        className="start-game-button"
       >
-        Start New Game
+        🎯 Start New Game
       </button>
     </div>
   );
