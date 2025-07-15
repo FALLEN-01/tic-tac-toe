@@ -514,6 +514,40 @@ body {
   color: #f472b6;
 }
 
+/* Processing move animation */
+.cell.processing {
+  background: rgba(255, 255, 255, 0.1);
+  animation: processMove 0.3s ease-in-out;
+}
+
+@keyframes processMove {
+  0% {
+    transform: scale(1);
+    background: rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.thinking-indicator {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
@@ -589,12 +623,12 @@ body {
 }
 
 /* AI Thinking Indicator */
-.cell.ai-thinking {
+/* .cell.ai-thinking {
   background: rgba(255, 255, 255, 0.1);
   cursor: wait;
-}
+} */
 
-.thinking-indicator {
+/* .thinking-indicator {
   position: absolute;
   font-size: clamp(1.5rem, 4vw, 2.2rem);
   animation: spin 1s linear infinite;
@@ -603,7 +637,7 @@ body {
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
-}
+} */
 
 /* Game Over Overlay */
 .game-over-overlay {
