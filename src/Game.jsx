@@ -36,8 +36,7 @@ export default function Game() {
   const startGame = () => {
     if (!selectedOpponent) return;
     setGameStarted(true);
-    
-    // If playing with AI, start a new game with the backend
+
     if (selectedOpponent === 'ai') {
       startNewGame();
     }
@@ -46,8 +45,6 @@ export default function Game() {
   // Handle cell click in game
   const handleCellClick = (index) => {
     if (board[index] !== '' || gameStatus !== 'playing' || isAiTurn) return;
-
-    // Make move via API for AI games, or locally for friend games
     makeMove(index);
   };
 
@@ -61,7 +58,6 @@ export default function Game() {
     setWinningCells([]);
     setIsAiTurn(false);
     
-    // Start a new game if playing with AI
     if (selectedOpponent === 'ai') {
       startNewGame();
     }
@@ -83,67 +79,42 @@ export default function Game() {
     navigate(`/result/${gameId}?winner=${result}&result=${gameStatus}`);
   };
 
-  // Game logic functions
-  const checkWinner = (board) => {
-    const winPatterns = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-      [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
-      [0, 4, 8], [2, 4, 6] // diagonals
-    ];
-
-    for (let pattern of winPatterns) {
-      const [a, b, c] = pattern;
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return { winner: board[a], winningCells: pattern };
-      }
-    }
-
-    if (board.every(cell => cell !== '')) {
-      return { winner: 'draw', winningCells: [] };
-    }
-
-    return null;
-  };
-
   // API calls to FastAPI backend
   const API_BASE_URL = 'https://tictactoe-backend-e24r.onrender.com'; // Adjust this to your FastAPI server URL
 
   const startNewGame = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/new_game`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          mode: mode,
-          ai_mode: selectedOpponent === 'ai',
-          depth: currentDifficulty
-        }),
-      });
+  try {
+    const response = await fetch(`${API_BASE_URL}/new_game`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        mode: mode,  // 'classic' or 'decay' from URL param
+        ai_mode: selectedOpponent === 'ai',
+        depth: currentDifficulty  // 1-5 depending on slider
+      }),
+    });
 
-      if (!response.ok) {
-        throw new Error('Failed to start new game');
-      }
+    if (!response.ok) {
+      throw new Error('Failed to start new game');
+    }
 
-      const gameData = await response.json();
-      setBoard(gameData.board);
-      setCurrentPlayer(gameData.player_symbol);
-      setPlayerSymbol(gameData.player_symbol);
+    const gameData = await response.json();
+    setBoard(gameData.board);
+    setCurrentPlayer(gameData.player_symbol);
+    setPlayerSymbol(gameData.player_symbol);
+    setMoveHistory(gameData.move_history || []);
 
-      if (gameData.result === 'in_progress') {
-        setGameStatus('playing');
-      } else if (gameData.result === 'draw') {
-        setGameStatus('draw');
-        setWinner('draw');
-      } else {
-        setGameStatus('won');
-        setWinner(gameData.result);
-        const winResult = checkWinner(gameData.board);
-        if (winResult) {
-          setWinningCells(winResult.winningCells);
-        }
-      }
+    if (gameData.result === 'in_progress') {
+      setGameStatus('playing');
+    } else if (gameData.result === 'draw') {
+      setGameStatus('draw');
+      setWinner('draw');
+    } else {
+      setGameStatus('won');
+      setWinner(gameData.result);
+    }
 
     if (!gameData.your_turn && selectedOpponent === 'ai') {
       setIsAiTurn(false);
@@ -156,86 +127,55 @@ export default function Game() {
 };
 
   const makeMove = async (index) => {
-    if (selectedOpponent !== 'ai') {
-      // For local multiplayer, handle moves locally
-      handleLocalMove(index);
-      return;
+  try {
+    setIsAiTurn(true);
+
+    const response = await fetch(`${API_BASE_URL}/make_move`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        board: board,
+        player_move: index,
+        player_symbol: currentPlayer,
+        ai_enabled: selectedOpponent === 'ai',
+        depth: currentDifficulty,
+        mode: mode,
+        move_history: moveHistory
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to make move');
     }
 
-    try {
-      setIsAiTurn(true);
-      
-      const response = await fetch(`${API_BASE_URL}/make_move`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          board: board,
-          player_move: index,
-          player_symbol: currentPlayer,
-          ai_enabled: true,
-          depth: currentDifficulty,
-          mode: mode
-        }),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to make move');
-      }
-      
-      const gameData = await response.json();
-      setBoard(gameData.board);
-      
-      if (gameData.result === 'in_progress') {
-        setGameStatus('playing');
-      } else if (gameData.result === 'draw') {
-        setGameStatus('draw');
-        setWinner('draw');
-      } else {
-        // gameData.result contains the winner ('X' or 'O')
-        setGameStatus('won');
-        setWinner(gameData.result);
-        const winResult = checkWinner(gameData.board);
-        if (winResult) {
-          setWinningCells(winResult.winningCells);
-        }
-      }
-      
-      setIsAiTurn(false);
-      
-    } catch (error) {
-      console.error('Error making move:', error);
-      setIsAiTurn(false);
-      // Fallback to local move
-      handleLocalMove(index);
-    }
-  };
+    const gameData = await response.json();
+    setBoard(gameData.board);
+    setMoveHistory(gameData.move_history || []);
 
-  const handleLocalMove = (index) => {
-    const newBoard = [...board];
-    newBoard[index] = currentPlayer;
-    setBoard(newBoard);
-
-    // Check for game end
-    const result = checkWinner(newBoard);
-    if (result) {
-      setGameStatus(result.winner === 'draw' ? 'draw' : 'won');
-      setWinner(result.winner);
-      setWinningCells(result.winningCells);
-      return;
+    if (gameData.result === 'in_progress') {
+      setGameStatus('playing');
+    } else if (gameData.result === 'draw') {
+      setGameStatus('draw');
+      setWinner('draw');
+    } else {
+      setGameStatus('won');
+      setWinner(gameData.result);
     }
 
-    // Switch player for local multiplayer
-    const nextPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    setCurrentPlayer(nextPlayer);
-  };
+    setIsAiTurn(!gameData.your_turn);
 
-  // Helper functions for game display
+  } catch (error) {
+    console.error('Error making move:', error);
+    setIsAiTurn(false);
+  }
+};
+
   const getStatusMessage = () => {
     if (gameStatus === 'won') {
       if (selectedOpponent === 'ai') {
-        // Check if the winner is the player's symbol or not
+        
         return winner === playerSymbol ? '🎉 You Won!' : '🤖 AI Won!';
       }
       return `🎉 Player ${winner} Won!`;
