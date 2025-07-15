@@ -144,9 +144,15 @@ export default function Game() {
       setGameMode('api');
       await startNewGame();
     } catch (error) {
-      setGameMode('local');
-      setPlayerSymbol('X');
-      resetGameState();
+      // Only fallback to local if it's a network error, not a game logic error
+      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        setGameMode('local');
+        setPlayerSymbol('X');
+        resetGameState();
+      } else {
+        // Re-throw other errors to be handled elsewhere
+        throw error;
+      }
     }
   };
 
@@ -208,6 +214,10 @@ export default function Game() {
 
   const startNewGame = async () => {
   try {
+    // Add timeout to prevent hanging requests
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
     const response = await fetch(`${API_BASE_URL}/new_game`, {
       method: 'POST',
       headers: {
@@ -218,10 +228,13 @@ export default function Game() {
         ai_mode: selectedOpponent === 'ai',
         depth: currentDifficulty  // 1-5 depending on slider
       }),
+      signal: controller.signal
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      throw new Error('Failed to start new game');
+      throw new Error(`HTTP ${response.status}: Failed to start new game`);
     }
 
     const gameData = await response.json();
@@ -256,6 +269,10 @@ export default function Game() {
   try {
     setIsAiTurn(true);
 
+    // Add timeout to prevent hanging requests
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
     const response = await fetch(`${API_BASE_URL}/make_move`, {
       method: 'POST',
       headers: {
@@ -270,10 +287,13 @@ export default function Game() {
         mode: mode,
         move_history: moveHistory
       }),
+      signal: controller.signal
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      throw new Error('Failed to make move');
+      throw new Error(`HTTP ${response.status}: Failed to make move`);
     }
 
     const gameData = await response.json();
@@ -352,7 +372,7 @@ export default function Game() {
               <div className="status-message">{getStatusMessage()}</div>
               {selectedOpponent === 'ai' && (
                 <div className="ai-difficulty">
-                  {gameMode === 'api' ? `AI Difficulty: ${difficultyNames[currentDifficulty]}` : 'Local AI (Fallback)'}
+                  {gameMode === 'api' ? `Online AI - Difficulty: ${difficultyNames[currentDifficulty]}` : 'Local AI (Connection Failed)'}
                 </div>
               )}
               {selectedOpponent === 'friends' && (
