@@ -1,5 +1,210 @@
+/* Random shaking animation for decorative elements */
+@keyframes randomShake1 {
+  0% { transform: translateX(0) translateY(0) rotate(0deg); }
+  10% { transform: translateX(-3px) translateY(-2px) rotate(1deg); }
+  20% { transform: translateX(2px) translateY(-3px) rotate(-0.5deg); }
+  30% { transform: translateX(-1px) translateY(3px) rotate(1.5deg); }
+  40% { transform: translateX(3px) translateY(1px) rotate(-1deg); }
+  50% { transform: translateX(-2px) translateY(-1px) rotate(0.5deg); }
+  60% { transform: translateX(1px) translateY(2px) rotate(-1.5deg); }
+  70% { transform: translateX(-3px) translateY(-2px) rotate(1deg); }
+  80% { transform: translateX(2px) translateY(-1px) rotate(-0.5deg); }
+  90% { transform: translateX(-1px) translateY(3px) rotate(1.2deg); }
+  100% { transform: translateX(0) translateY(0) rotate(0deg); }
+}
+
+@keyframes randomShake2 {
+  0% { transform: translateX(0) translateY(0) rotate(0deg); }
+  15% { transform: translateX(2px) translateY(-3px) rotate(-1deg); }
+  25% { transform: translateX(-3px) translateY(1px) rotate(1.5deg); }
+  35% { transform: translateX(1px) translateY(3px) rotate(-0.5deg); }
+  45% { transform: translateX(-2px) translateY(-2px) rotate(1.2deg); }
+  55% { transform: translateX(3px) translateY(-1px) rotate(-1.5deg); }
+  65% { transform: translateX(-1px) translateY(2px) rotate(0.8deg); }
+  75% { transform: translateX(2px) translateY(-3px) rotate(-1deg); }
+  85% { transform: translateX(-3px) translateY(1px) rotate(1.3deg); }
+  95% { transform: translateX(1px) translateY(-1px) rotate(-0.7deg); }
+  100% { transform: translateX(0) translateY(0) rotate(0deg); }
+}
+
+@keyframes randomShake3 {
+  0% { transform: translateX(0) translateY(0) rotate(0deg); }
+  12% { transform: translateX(-2px) translateY(3px) rotate(1.5deg); }
+  24% { transform: translateX(3px) translateY(-1px) rotate(-1.2deg); }
+  36% { transform: translateX(-1px) translateY(-3px) rotate(0.8deg); }
+  48% { transform: translateX(2px) translateY(2px) rotate(-1.5deg); }
+  60% { transform: translateX(-3px) translateY(-2px) rotate(1.1deg); }
+  72% { transform: translateX(1px) translateY(3px) rotate(-0.9deg); }
+  84% { transform: translateX(-2px) translateY(-1px) rotate(1.4deg); }
+  96% { transform: translateX(3px) translateY(2px) rotate(-1.1deg); }
+  100% { transform: translateX(0) translateY(0) rotate(0deg); }
+}
+
+@keyframes randomShake4 {
+  0% { transform: translateX(0) translateY(0) rotate(0deg); }
+  8% { transform: translateX(3px) translateY(-2px) rotate(-1.3deg); }
+  16% { transform: translateX(-1px) translateY(3px) rotate(1.2deg); }
+  24% { transform: translateX(2px) translateY(-3px) rotate(-0.8deg); }
+  32% { transform: translateX(-3px) translateY(1px) rotate(1.5deg); }
+  40% { transform: translateX(1px) translateY(-2px) rotate(-1.1deg); }
+  48% { transform: translateX(-2px) translateY(3px) rotate(0.9deg); }
+  56% { transform: translateX(3px) translateY(-1px) rotate(-1.4deg); }
+  64% { transform: translateX(-1px) translateY(2px) rotate(1.3deg); }
+  72% { transform: translateX(2px) translateY(-3px) rotate(-0.7deg); }
+  80% { transform: translateX(-3px) translateY(1px) rotate(1.1deg); }
+  88% { transform: translateX(1px) translateY(-2px) rotate(-1.2deg); }
+  96% { transform: translateX(-2px) translateY(2px) rotate(0.8deg); }
+  100% { transform: translateX(0) translateY(0) rotate(0deg); }
+}
+
+@keyframes randomShake5 {
+  0% { transform: translateX(0) translateY(0) rotate(0deg); }
+  18% { transform: translateX(-2px) translateY(2px) rotate(-1.2deg); }
+  28% { transform: translateX(3px) translateY(-2px) rotate(1.4deg); }
+  38% { transform: translateX(-1px) translateY(-3px) rotate(-0.8deg); }
+  48% { transform: translateX(2px) translateY(3px) rotate(1.1deg); }
+  58% { transform: translateX(-3px) translateY(1px) rotate(-1.5deg); }
+  68% { transform: translateX(1px) translateY(-2px) rotate(0.9deg); }
+  78% { transform: translateX(-2px) translateY(2px) rotate(-1.3deg); }
+  88% { transform: translateX(3px) translateY(-1px) rotate(1.2deg); }
+  98% { transform: translateX(-1px) translateY(3px) rotate(-0.7deg); }
+  100% { transform: translateX(0) translateY(0) rotate(0deg); }
+}
+
+@keyframes randomShake6 {
+  0% { transform: translateX(0) translateY(0) rotate(0deg); }
+  22% { transform: translateX(3px) translateY(1px) rotate(1.3deg); }
+  32% { transform: translateX(-1px) translateY(-2px) rotate(-1.1deg); }
+  42% { transform: translateX(2px) translateY(3px) rotate(0.8deg); }
+  52% { transform: translateX(-3px) translateY(-1px) rotate(-1.4deg); }
+  62% { transform: translateX(1px) translateY(2px) rotate(1.2deg); }
+  72% { transform: translateX(-2px) translateY(-3px) rotate(-0.9deg); }
+  82% { transform: translateX(3px) translateY(1px) rotate(1.5deg); }
+  92% { transform: translateX(-1px) translateY(-2px) rotate(-1.1deg); }
+  100% { transform: translateX(0) translateY(0) rotate(0deg); }
+}
+
+/* Decorative floating X and O elements */
+.decorative-x, .decorative-o {
+  position: absolute;
+  width: 80px;
+  opacity: 0.1;
+  font-family: 'Arial', Helvetica, sans-serif;
+  font-weight: bold;
+  color: white;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  text-align: center;
+  line-height: 1;
+  letter-spacing: 0;
+  user-select: none;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.decorative-x-1 { 
+  top: 12vh; 
+  left: 8vw; 
+  animation: randomShake1 5.2s ease-in-out infinite;
+}
+.decorative-o-1 { 
+  top: 20vh; 
+  right: 12vw; 
+  animation: randomShake2 4.8s ease-in-out infinite;
+}
+.decorative-x-2 { 
+  bottom: 18vh; 
+  right: 6vw; 
+  animation: randomShake3 5.5s ease-in-out infinite;
+}
+.decorative-o-2 { 
+  bottom: 25vh; 
+  left: 10vw; 
+  animation: randomShake4 4.3s ease-in-out infinite;
+}
+.decorative-x-3 { 
+  top: 35vh; 
+  left: 15vw; 
+  animation: randomShake1 4.7s ease-in-out infinite;
+}
+.decorative-o-3 { 
+  top: 55vh; 
+  right: 4vw; 
+  animation: randomShake2 5.9s ease-in-out infinite;
+}
+.decorative-x-4 { 
+  bottom: 35vh; 
+  left: 3vw; 
+  animation: randomShake3 4.2s ease-in-out infinite;
+}
+.decorative-o-4 { 
+  bottom: 12vh; 
+  right: 18vw; 
+  animation: randomShake4 5.8s ease-in-out infinite;
+}
+.decorative-x-5 { 
+  top: 65vh; 
+  right: 2vw; 
+  animation: randomShake5 5.1s ease-in-out infinite;
+}
+.decorative-o-5 { 
+  top: 5vh; 
+  left: 20vw; 
+  animation: randomShake6 4.6s ease-in-out infinite;
+}
+.decorative-x-6 { 
+  bottom: 50vh; 
+  right: 20vw; 
+  animation: randomShake1 5.3s ease-in-out infinite;
+}
+.decorative-o-6 { 
+  bottom: 8vh; 
+  left: 1vw; 
+  animation: randomShake2 4.9s ease-in-out infinite;
+}
+.decorative-x-7 { 
+  top: 75vh; 
+  left: 5vw; 
+  animation: randomShake3 4.1s ease-in-out infinite;
+}
+.decorative-o-7 { 
+  top: 2vh; 
+  right: 25vw; 
+  animation: randomShake4 5.7s ease-in-out infinite;
+}
+.decorative-x-8 { 
+  bottom: 2vh; 
+  right: 12vw; 
+  animation: randomShake5 4.8s ease-in-out infinite;
+}
+.decorative-o-8 { 
+  bottom: 60vh; 
+  left: 18vw; 
+  animation: randomShake6 5.4s ease-in-out infinite;
+}
+.decorative-x-9 { 
+  top: 45vh; 
+  left: 1vw; 
+  animation: randomShake1 4.4s ease-in-out infinite;
+}
+.decorative-o-9 { 
+  top: 30vh; 
+  right: 25vw; 
+  animation: randomShake2 5.6s ease-in-out infinite;
+}
+.decorative-x-10 { 
+  bottom: 40vh; 
+  right: 2vw; 
+  animation: randomShake3 5.0s ease-in-out infinite;
+}
+.decorative-o-10 { 
+  bottom: 5vh; 
+  left: 15vw; 
+  animation: randomShake4 4.5s ease-in-out infinite;
+}
+
 /* Desktop optimized styles */
 .result-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;

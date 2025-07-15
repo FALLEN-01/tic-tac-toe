@@ -48,6 +48,28 @@ export default function Result() {
 
   return (
     <div className="result-container">
+      {/* Decorative Elements */}
+      <div className="decorative-x decorative-x-1">X</div>
+      <div className="decorative-o decorative-o-1">O</div>
+      <div className="decorative-x decorative-x-2">X</div>
+      <div className="decorative-o decorative-o-2">O</div>
+      <div className="decorative-x decorative-x-3">X</div>
+      <div className="decorative-o decorative-o-3">O</div>
+      <div className="decorative-x decorative-x-4">X</div>
+      <div className="decorative-o decorative-o-4">O</div>
+      <div className="decorative-x decorative-x-5">X</div>
+      <div className="decorative-o decorative-o-5">O</div>
+      <div className="decorative-x decorative-x-6">X</div>
+      <div className="decorative-o decorative-o-6">O</div>
+      <div className="decorative-x decorative-x-7">X</div>
+      <div className="decorative-o decorative-o-7">O</div>
+      <div className="decorative-x decorative-x-8">X</div>
+      <div className="decorative-o decorative-o-8">O</div>
+      <div className="decorative-x decorative-x-9">X</div>
+      <div className="decorative-o decorative-o-9">O</div>
+      <div className="decorative-x decorative-x-10">X</div>
+      <div className="decorative-o decorative-o-10">O</div>
+      
       <div className={`result-emoji ${resultDisplay.celebration ? 'celebrate' : ''}`}>
         {resultDisplay.emoji}
       </div>
