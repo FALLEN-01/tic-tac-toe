@@ -16,6 +16,7 @@ export default function Game() {
   // Game state
   const [board, setBoard] = useState(Array(9).fill(''));
   const [currentPlayer, setCurrentPlayer] = useState('X');
+  const [playerSymbol, setPlayerSymbol] = useState('');
   const [gameStatus, setGameStatus] = useState('playing'); // 'playing', 'won', 'draw'
   const [winner, setWinner] = useState(null);
   const [winningCells, setWinningCells] = useState([]);
@@ -54,6 +55,7 @@ export default function Game() {
   const resetGame = () => {
     setBoard(Array(9).fill(''));
     setCurrentPlayer('X');
+    setPlayerSymbol('');
     setGameStatus('playing');
     setWinner(null);
     setWinningCells([]);
@@ -99,7 +101,7 @@ export default function Game() {
   };
 
   // API calls to FastAPI backend
-  const API_BASE_URL = 'http://localhost:8000'; // FastAPI backend URL
+  const API_BASE_URL = 'https://tictactoe-backend-e24r.onrender.com'; // FastAPI backend URL
 
   const startNewGame = async () => {
     try {
@@ -122,9 +124,16 @@ export default function Game() {
       const gameData = await response.json();
       setBoard(gameData.board);
       setCurrentPlayer(gameData.player_symbol);
-      setGameStatus(gameData.result === 'in_progress' ? 'playing' : 'won');
+      setPlayerSymbol(gameData.player_symbol); // Store the player's assigned symbol
       
-      if (gameData.result !== 'in_progress') {
+      if (gameData.result === 'in_progress') {
+        setGameStatus('playing');
+      } else if (gameData.result === 'draw') {
+        setGameStatus('draw');
+        setWinner('draw');
+      } else {
+        // gameData.result contains the winner ('X' or 'O')
+        setGameStatus('won');
         setWinner(gameData.result);
         const winResult = checkWinner(gameData.board);
         if (winResult) {
@@ -175,9 +184,15 @@ export default function Game() {
       
       const gameData = await response.json();
       setBoard(gameData.board);
-      setGameStatus(gameData.result === 'in_progress' ? 'playing' : (gameData.result === 'draw' ? 'draw' : 'won'));
       
-      if (gameData.result !== 'in_progress') {
+      if (gameData.result === 'in_progress') {
+        setGameStatus('playing');
+      } else if (gameData.result === 'draw') {
+        setGameStatus('draw');
+        setWinner('draw');
+      } else {
+        // gameData.result contains the winner ('X' or 'O')
+        setGameStatus('won');
         setWinner(gameData.result);
         const winResult = checkWinner(gameData.board);
         if (winResult) {
@@ -218,7 +233,8 @@ export default function Game() {
   const getStatusMessage = () => {
     if (gameStatus === 'won') {
       if (selectedOpponent === 'ai') {
-        return winner === 'X' ? '🎉 You Won!' : '🤖 AI Won!';
+        // Check if the winner is the player's symbol or not
+        return winner === playerSymbol ? '🎉 You Won!' : '🤖 AI Won!';
       }
       return `🎉 Player ${winner} Won!`;
     }
@@ -229,7 +245,7 @@ export default function Game() {
       return '🤔 AI is thinking...';
     }
     if (selectedOpponent === 'ai') {
-      return currentPlayer === 'X' ? '👤 Your Turn' : '🤖 AI Turn';
+      return isAiTurn ? '🤖 AI Turn' : '👤 Your Turn';
     }
     return `👤 Player ${currentPlayer}'s Turn`;
   };

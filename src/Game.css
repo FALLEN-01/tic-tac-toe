@@ -430,7 +430,7 @@ body {
 
 .game-board-container {
   position: absolute;
-  top: 55vh;
+  top: 45vh;
   left: 50%;
   transform: translate(-50%, -50%);
   transition: all 1s ease;
@@ -515,7 +515,7 @@ body {
 
 .action-buttons {
   position: absolute;
-  bottom: 5vh;
+  bottom: 12vh;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -595,13 +595,13 @@ body {
   }
   
   .game-board-container {
-    top: 50vh;
+    top: 45vh;
   }
   
   .action-buttons {
     flex-direction: column;
     gap: 12px;
-    bottom: 3vh;
+    bottom: 6vh;
   }
   
   .btn {
