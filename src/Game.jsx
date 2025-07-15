@@ -12,6 +12,7 @@ export default function Game() {
   const [selectedOpponent, setSelectedOpponent] = useState(null);
   const [currentDifficulty, setCurrentDifficulty] = useState(3);
   const [gameStarted, setGameStarted] = useState(false);
+  const [gameMode, setGameMode] = useState('local'); // 'local' or 'api'
   
   // Game state
   const [board, setBoard] = useState(Array(9).fill(''));
@@ -127,10 +128,37 @@ export default function Game() {
     if (!selectedOpponent) return;
     setGameStarted(true);
     
-    // Only AI games are supported now
-    if (selectedOpponent === 'ai') {
-      startNewGame();
+    if (selectedOpponent === 'friends') {
+      // Always use local mode for friends
+      setGameMode('local');
+      setPlayerSymbol('X');
+      resetGameState();
+    } else if (selectedOpponent === 'ai') {
+      // Try API first, fallback to local if unavailable
+      tryStartApiGame();
     }
+  };
+
+  const tryStartApiGame = async () => {
+    try {
+      setGameMode('api');
+      await startNewGame();
+    } catch (error) {
+      console.log('API unavailable, falling back to local AI:', error);
+      setGameMode('local');
+      setPlayerSymbol('X');
+      resetGameState();
+    }
+  };
+
+  const resetGameState = () => {
+    setBoard(Array(9).fill(''));
+    setCurrentPlayer('X');
+    setGameStatus('playing');
+    setWinner(null);
+    setWinningCells([]);
+    setIsAiTurn(false);
+    setMoveHistory([]);
   };
 
   // Handle cell click in game
@@ -142,23 +170,14 @@ export default function Game() {
     } else if (gameMode === 'local') {
       makeLocalMove(index);
     }
-    makeMove(index);
   };
 
   // Reset game
   const resetGame = () => {
-    setBoard(Array(9).fill(''));
-    setCurrentPlayer('X');
-    setPlayerSymbol('X');
-    setGameStatus('playing');
-    setWinner(null);
-    setWinningCells([]);
-    setIsAiTurn(false);
-    setMoveHistory([]);
-    
-    // Only AI games are supported
-    if (selectedOpponent === 'ai') {
+    if (gameMode === 'api' && selectedOpponent === 'ai') {
       startNewGame();
+    } else {
+      resetGameState();
     }
   };
 
@@ -186,7 +205,7 @@ export default function Game() {
   };
 
   // API calls to FastAPI backend
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   const startNewGame = async () => {
   try {
@@ -228,7 +247,7 @@ export default function Game() {
 
   } catch (error) {
     console.error('Error starting new game:', error);
-    alert('Backend server not available. Playing in local mode.');
+    throw error; // Re-throw the error so tryStartApiGame can handle fallback
   }
 };
 
