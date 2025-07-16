@@ -1401,9 +1401,12 @@ body {
 }
 
 .option-cards-container {
-  width: 100%;
+  width: min(70vw, 600px);
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  flex-direction: row;
+  gap: 30px;
+  z-index: 10;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
 }
