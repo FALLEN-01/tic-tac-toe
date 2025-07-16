@@ -80,7 +80,7 @@ export default function Game() {
           setWinner(result);
         }
         setWinningCells([]);
-      }, 2000); // 2 second delay to see the final move
+      }, 1000); // 1 second delay to see the final move
     } else {
       // Switch player
       const nextPlayer = currentPlayer === 'X' ? 'O' : 'X';
@@ -88,7 +88,7 @@ export default function Game() {
       
       // If playing against AI in local mode and it's AI's turn
       if (selectedOpponent === 'ai' && gameMode === 'local' && nextPlayer === 'O') {
-        setTimeout(() => makeLocalAiMove(newBoard), 2000); // 2 second delay for AI move
+        setTimeout(() => makeLocalAiMove(newBoard), 1000); // 1 second delay for AI move
       }
     }
   };
@@ -117,7 +117,7 @@ export default function Game() {
           setWinner(result);
         }
         setWinningCells([]);
-      }, 2000); // 2 second delay to see the AI's final move
+      }, 1000); // 1 second delay to see the AI's final move
     } else {
       setCurrentPlayer('X');
     }
@@ -189,7 +189,7 @@ export default function Game() {
         makeLocalMove(index);
       }
       setIsProcessingMove(false);
-    }, 2000); // 2 second delay for natural feel
+    }, 1000); // 1 second delay for natural feel
   };
 
   // Reset game
@@ -271,7 +271,7 @@ export default function Game() {
           setGameStatus('won');
           setWinner(gameData.result);
         }
-      }, 2000); // 2 second delay to see the final move
+      }, 1000); // 1 second delay to see the final move
     }
 
     if (!gameData.your_turn && selectedOpponent === 'ai') {
@@ -335,7 +335,7 @@ export default function Game() {
           setWinner(gameData.result);
         }
         setIsAiTurn(false);
-      }, 2000); // 2 second delay to see the final move
+      }, 1000); // 1 second delay to see the final move
     }
 
   } catch (error) {
