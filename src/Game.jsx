@@ -554,39 +554,42 @@ export default function Game() {
 
         {/* AI Difficulty Slider */}
         {selectedOpponent === 'ai' && (
-          <div className="selection-section">
-            <h2 className="section-title">AI Difficulty</h2>
-            <div className="difficulty-slider-container">
-              <div className="difficulty-display">
-                <span className="difficulty-label">Level:</span>
-                <span 
-                  className={`difficulty-name ${difficultyColors[currentDifficulty]}`}
-                >
-                  {difficultyNames[currentDifficulty]}
-                </span>
-              </div>
-              
-              <div className="slider-container">
-                <input 
-                  type="range" 
-                  min="1"
-                  max="5"
-                  value={currentDifficulty}
-                  onChange={(e) => setCurrentDifficulty(Number(e.target.value))}
-                  className={`difficulty-slider ${difficultyColors[currentDifficulty]}`}
+          <div className="difficulty-slider">
+            <div className="difficulty-display">
+              <span className="difficulty-label">Difficulty:</span>
+              <span className={`difficulty-name ${difficultyColors[currentDifficulty].toLowerCase()}`}>
+                {difficultyNames[currentDifficulty]}
+              </span>
+            </div>
+            
+            <div className="slider-container">
+              <div className="slider-track">
+                <div 
+                  className={`slider-progress ${difficultyColors[currentDifficulty].toLowerCase()}`}
+                  style={{
+                    width: `${((currentDifficulty - 1) / 4) * 100}%`
+                  }}
                 />
               </div>
-              
-              <div className="difficulty-labels">
-                {difficultyNames.slice(1).map((name, index) => (
-                  <span 
-                    key={index + 1}
-                    className={`label ${currentDifficulty === index + 1 ? `active ${difficultyColors[index + 1]}` : ''}`}
-                  >
-                    {name}
-                  </span>
-                ))}
-              </div>
+              <input 
+                type="range" 
+                min="1"
+                max="5"
+                value={currentDifficulty}
+                onChange={(e) => setCurrentDifficulty(Number(e.target.value))}
+                className="slider-input"
+              />
+            </div>
+            
+            <div className="difficulty-labels">
+              {difficultyNames.slice(1).map((name, index) => (
+                <span 
+                  key={index + 1}
+                  className={`label ${currentDifficulty === index + 1 ? 'active' : ''}`}
+                >
+                  {name}
+                </span>
+              ))}
             </div>
           </div>
         )}
