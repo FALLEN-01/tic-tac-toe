@@ -440,17 +440,34 @@ body {
 
 /* Difficulty Slider - Enhanced design */
 .difficulty-slider {
-  position: relative;
-  width: 90%;
-  margin: 2rem auto;
-  width: 90%;
-  max-width: 600px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: min(70vw, 600px);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
-  padding: 2rem;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  margin: 0 auto 2rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.difficulty-slider::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  opacity: 0;
   transition: opacity 0.3s ease;
+  border-radius: 20px;
+}
+
+.difficulty-slider:hover::before {
+  opacity: 1;
 }
 
 .slider-container {
@@ -496,17 +513,17 @@ body {
 
 .difficulty-display {
   text-align: center;
-  margin-bottom: 1rem;
 }
 
 .difficulty-label {
   color: white;
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-size: clamp(1rem, 2vw, 1.2rem);
   font-weight: 500;
+  opacity: 0.9;
 }
 
 .difficulty-name {
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-size: clamp(1.1rem, 2.2vw, 1.4rem);
   font-weight: bold;
   margin-left: 0.5rem;
 }
@@ -524,7 +541,7 @@ body {
 }
 
 .label {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.6);
   font-size: clamp(0.7rem, 1.5vw, 0.9rem);
   transition: all 0.3s ease;
 }
@@ -563,6 +580,7 @@ body {
 .slider-input::-moz-range-thumb:hover {
   transform: scale(1.1);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .slider-input::-webkit-slider-thumb:active,
