@@ -353,7 +353,7 @@ export default function Game() {
     if (gameStatus === 'won') {
       if (selectedOpponent === 'ai') {
         
-        return winner === playerSymbol ? '🎉 You Won!' : '🤖 AI Won!';
+        return winner === playerSymbol ? '🎉 You Won!' : '🤖 Get good :P';
       } else {
         // Local multiplayer
         return `🎉 Player ${winner} Won!`;
