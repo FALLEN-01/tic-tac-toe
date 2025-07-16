@@ -575,7 +575,7 @@ export default function Game() {
                   <input 
                     type="range" 
                     min="1"
-                    max="9"
+                    max="5"
                     value={currentDifficulty}
                     onChange={(e) => setCurrentDifficulty(Number(e.target.value))}
                     className="difficulty-slider"
