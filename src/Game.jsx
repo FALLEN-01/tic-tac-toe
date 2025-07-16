@@ -567,20 +567,14 @@ export default function Game() {
               </div>
               
               <div className="slider-container">
-                <div className="slider-track">
-                  <div 
-                    className={`slider-progress ${difficultyColors[currentDifficulty]}`}
-                    style={{ width: `${((currentDifficulty - 1) / 4) * 100}%` }}
-                  ></div>
-                  <input 
-                    type="range" 
-                    min="1"
-                    max="5"
-                    value={currentDifficulty}
-                    onChange={(e) => setCurrentDifficulty(Number(e.target.value))}
-                    className="difficulty-slider"
-                  />
-                </div>
+                <input 
+                  type="range" 
+                  min="1"
+                  max="5"
+                  value={currentDifficulty}
+                  onChange={(e) => setCurrentDifficulty(Number(e.target.value))}
+                  className={`difficulty-slider ${difficultyColors[currentDifficulty]}`}
+                />
               </div>
               
               <div className="difficulty-labels">
