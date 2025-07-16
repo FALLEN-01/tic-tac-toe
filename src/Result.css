@@ -89,7 +89,7 @@
   position: absolute;
   width: 80px;
   opacity: 0.1;
-  font-family: 'Arial', Helvetica, sans-serif;
+  font-family: 'Annie Use Your Telescope', Helvetica, Arial, sans-serif;
   font-weight: bold;
   color: white;
   font-size: clamp(2.5rem, 5vw, 3.5rem);
@@ -337,6 +337,14 @@ body {
   max-width: 350px;
 }
 
+/* Button container */
+.result-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
 .button-container {
   display: flex;
   gap: 2rem;
@@ -349,6 +357,7 @@ body {
 .result-button {
   padding: 1.2rem 2.5rem;
   font-size: clamp(1rem, 2.5vw, 1.2rem);
+  font-family: 'Annie Use Your Telescope', Helvetica, Arial, sans-serif;
   border: 2px solid rgba(255, 255, 255, 0.4);
   border-radius: 50px;
   cursor: pointer;
@@ -374,6 +383,57 @@ body {
   transform: translateY(0);
 }
 
+/* Base button styles */
+.play-again-btn,
+.go-home-btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Annie Use Your Telescope', Helvetica, Arial, sans-serif;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 140px;
+  justify-content: center;
+}
+
+/* Play Again button */
+.play-again-btn {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.play-again-btn:hover {
+  background: linear-gradient(135deg, #45a049, #3d8b40);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+/* Go Home button */
+.go-home-btn {
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  color: white;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+}
+
+.go-home-btn:hover {
+  background: linear-gradient(135deg, #1976D2, #1565C0);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+}
+
+/* Button active states */
+.play-again-btn:active,
+.go-home-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
 .play-again {
   background: rgba(76, 175, 80, 0.3);
   border-color: #4CAF50;
@@ -390,4 +450,18 @@ body {
 
 .go-home:hover {
   background: rgba(0, 140, 186, 0.5);
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .result-actions {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .play-again-btn,
+  .go-home-btn {
+    width: 100%;
+    max-width: 250px;
+  }
 }
