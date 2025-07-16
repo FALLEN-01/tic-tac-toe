@@ -25,6 +25,11 @@ export default function Game() {
   const [moveHistory, setMoveHistory] = useState([]);
   const [isProcessingMove, setIsProcessingMove] = useState(false);
 
+  const getDepthFromDifficulty = (difficulty) => {
+  const depthMapping = [0, 1, 3, 5, 7, 9]; // index 0 unused, positions 1-5 map to depths
+  return depthMapping[difficulty];
+  };
+
   const difficultyNames = ['', 'Very Easy', 'Easy', 'Medium', 'Hard', 'Expert'];
   const difficultyColors = ['', 'blue', 'green', 'orange', 'red', 'purple'];
 
@@ -304,7 +309,7 @@ export default function Game() {
         player_move: index,
         player_symbol: currentPlayer,
         ai_enabled: selectedOpponent === 'ai',
-        depth: currentDifficulty,
+        depth: getDepthFromDifficulty(currentDifficulty),
         mode: mode,
         move_history: moveHistory
       }),
@@ -576,7 +581,11 @@ export default function Game() {
                 min="1"
                 max="5"
                 value={currentDifficulty}
-                onChange={(e) => setCurrentDifficulty(Number(e.target.value))}
+                onChange={(e) => {
+                  const sliderValue = Number(e.target.value);
+                  const depthMapping = [0, 1, 3, 5, 7, 9]; // index 0 unused, positions 1-5 map to depths
+                  setCurrentDifficulty(sliderValue);
+                }}
                 className="slider-input"
               />
             </div>
