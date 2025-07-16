@@ -1258,6 +1258,7 @@ body {
   }
 }
 
+/* Replace this section in your CSS around line 800+ */
 @media (max-width: 768px) {
   .main-title {
     font-size: clamp(2.5rem, 7vw, 3.5rem);
@@ -1333,13 +1334,10 @@ body {
     font-size: clamp(0.9rem, 2.2vw, 1.1rem);
   }
   
+  /* KEEP BUTTONS FIXED TO SIDES - Remove the centering override */
   .back-button, .start-button {
-    position: relative;
-    bottom: auto;
-    left: auto;
-    right: auto;
-    margin: 0.5rem;
     font-size: clamp(0.9rem, 2.2vw, 1.1rem);
+    padding: 0.8rem 1.5rem; /* Adjust padding for mobile */
   }
   
   .game-over-content {
