@@ -242,7 +242,7 @@ export default function Game() {
       body: JSON.stringify({
         mode: mode,  // 'classic' or 'decay' from URL param
         ai_mode: selectedOpponent === 'ai',
-        depth: currentDifficulty  // 1-5 depending on slider
+        depth: currentDifficulty  // 1-9 depending on slider
       }),
       signal: controller.signal
     });
@@ -572,11 +572,15 @@ export default function Game() {
                     className={`slider-progress ${difficultyColors[currentDifficulty]}`}
                     style={{ width: `${((currentDifficulty - 1) / 4) * 100}%` }}
                   ></div>
+                  <input 
+                    type="range" 
+                    min="1"
+                    max="9"
+                    value={currentDifficulty}
+                    onChange={(e) => setCurrentDifficulty(Number(e.target.value))}
+                    className="difficulty-slider"
+                  />
                 </div>
-                <input 
-                  type="range" 
-                  min="1" 
-                />
               </div>
               
               <div className="difficulty-labels">
