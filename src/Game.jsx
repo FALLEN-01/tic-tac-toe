@@ -90,41 +90,6 @@ export default function Game() {
       // Switch player
       const nextPlayer = currentPlayer === 'X' ? 'O' : 'X';
       setCurrentPlayer(nextPlayer);
-      
-      // If playing against AI in local mode and it's AI's turn
-      if (selectedOpponent === 'ai' && gameMode === 'local' && nextPlayer === 'O') {
-        setTimeout(() => makeLocalAiMove(newBoard), 1000); // 1 second delay for AI move
-      }
-    }
-  };
-
-  const makeLocalAiMove = (currentBoard) => {
-    const availableMoves = currentBoard.map((cell, index) => cell === '' ? index : null).filter(val => val !== null);
-    if (availableMoves.length === 0) return;
-    
-    // Simple AI: random move for now
-    const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
-    
-    const newBoard = [...currentBoard];
-    newBoard[randomMove] = 'O';
-    setBoard(newBoard);
-    
-    // Check for winner
-    const result = checkLocalWinner(newBoard);
-    if (result) {
-      // Add delay before showing result modal
-      setTimeout(() => {
-        if (result === 'draw') {
-          setGameStatus('draw');
-          setWinner('draw');
-        } else {
-          setGameStatus('won');
-          setWinner(result);
-        }
-        setWinningCells([]);
-      }, 1000); // 1 second delay to see the AI's final move
-    } else {
-      setCurrentPlayer('X');
     }
   };
 
@@ -183,18 +148,18 @@ export default function Game() {
   const handleCellClick = (index) => {
     if (board[index] !== '' || gameStatus !== 'playing' || isAiTurn || isProcessingMove) return;
 
-    // Set processing state for visual feedback
-    setIsProcessingMove(true);
-
-    // Add a small delay to make the move feel more natural
-    setTimeout(() => {
-      if (gameMode === 'api' && selectedOpponent === 'ai') {
+    if(selectedOpponent === 'ai' && gameMode === 'api'){
+      setIsProcessingMove(true)
+      setTimeout(()=>{
         makeMove(index);
-      } else if (gameMode === 'local') {
+        setIsProcessingMove(false);
+      }, 500);
+    }
+    else if (gameMode==='local'){
+      setTimeout(()=>{
         makeLocalMove(index);
-      }
-      setIsProcessingMove(false);
-    }, 1000); // 1 second delay for natural feel
+      }, 500);
+    }
   };
 
   // Reset game
@@ -441,7 +406,7 @@ export default function Game() {
                       {cell}
                     </span>
                   )}
-                  {(isAiTurn || isProcessingMove) && cell === '' && (
+                  {selectOpponent==='ai' && (isAiTurn || isProcessingMove) && cell === '' && (
                     <div className="thinking-indicator">⏳</div>
                   )}
                 </button>
