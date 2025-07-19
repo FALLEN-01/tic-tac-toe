@@ -590,10 +590,20 @@ body {
 }
 /* Action Buttons - More compact */
 /* Action Buttons - Fixed positioning and styling */
+
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 1.5rem;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
 .back-button {
-  position: fixed;
-  bottom: 2rem;
-  left: 2rem;
+  position: relative;
   z-index: 1000;
   all: unset;
   font-family: 'Annie Use Your Telescope', sans-serif;
@@ -623,9 +633,7 @@ body {
 }
 
 .start-button {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  position: relative;
   z-index: 1000;
   all: unset;
   font-family: 'Annie Use Your Telescope', sans-serif;
