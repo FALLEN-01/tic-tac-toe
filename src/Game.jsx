@@ -201,11 +201,11 @@ export default function Game() {
   };
 
   // API calls to FastAPI backend
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  //const API_BASE_URL = 'http://localhost:3000';
 
   const startNewGame = async () => {
   try {
-    // Add timeout to prevent hanging requests
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
@@ -215,9 +215,9 @@ export default function Game() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        mode: mode,  // 'classic' or 'decay' from URL param
+        mode: mode,
         ai_mode: selectedOpponent === 'ai',
-        depth: currentDifficulty  // 1-9 depending on slider
+        depth: getDepthFromDifficulty(currentDifficulty)  // 1-9 depending on slider
       }),
       signal: controller.signal
     });
