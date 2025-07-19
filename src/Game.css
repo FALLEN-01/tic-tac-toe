@@ -603,7 +603,9 @@ body {
 }
 
 .back-button {
-  position: relative;
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
   z-index: 1000;
   all: unset;
   font-family: 'Annie Use Your Telescope', sans-serif;
@@ -633,7 +635,9 @@ body {
 }
 
 .start-button {
-  position: relative;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
   z-index: 1000;
   all: unset;
   font-family: 'Annie Use Your Telescope', sans-serif;
