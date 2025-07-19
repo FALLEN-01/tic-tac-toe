@@ -75,7 +75,6 @@ export default function Game() {
     // Check for winner
     const result = checkLocalWinner(newBoard);
     if (result) {
-      // Add delay before showing result modal
       setTimeout(() => {
         if (result === 'draw') {
           setGameStatus('draw');
@@ -85,12 +84,16 @@ export default function Game() {
           setWinner(result);
         }
         setWinningCells([]);
-      }, 1000); // 1 second delay to see the final move
-    } else {
+      }, 500); // 1 second delay to see the final move
+    } 
       // Switch player
-      const nextPlayer = currentPlayer === 'X' ? 'O' : 'X';
-      setCurrentPlayer(nextPlayer);
-    }
+    const nextPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    setCurrentPlayer(nextPlayer);
+
+    setIsProcessingMove(true);
+    setTimeout(()=>{
+      setIsProcessingMove(false);
+    }, 500);
   };
 
   const selectOpponent = (opponent) => {
