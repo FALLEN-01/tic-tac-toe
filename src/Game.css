@@ -603,10 +603,6 @@ body {
 }
 
 .back-button {
-  position: fixed;
-  bottom: 2rem;
-  left: 2rem;
-  z-index: 1000;
   all: unset;
   font-family: 'Annie Use Your Telescope', sans-serif;
   cursor: pointer;
@@ -635,29 +631,34 @@ body {
 }
 
 .start-button {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 1000;
   all: unset;
   font-family: 'Annie Use Your Telescope', sans-serif;
-  cursor: pointer;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(128, 128, 128, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
-  color: white;
+  color: rgba(255, 255, 255, 0.5);
   font-size: clamp(1rem, 1.5vw, 1.2rem);
   font-weight: 600;
   padding: 1rem 2rem;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: not-allowed;
 }
 
-.start-button:hover:not(.disabled) {
+.start-button:not(.disabled) {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);
+}
+
+.start-button:not(.disabled):hover {
   background: linear-gradient(135deg, #16a34a, #15803d);
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(34, 197, 94, 0.4);
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .start-button.disabled {
@@ -1054,6 +1055,17 @@ body {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+/* Setup Buttons Container */
+.setup-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: min(70vw, 600px);
+  margin: 2rem auto;
+  padding: 0 1rem;
+  z-index: 10;
 }
 
 /* Selection Sections - All in same layer */

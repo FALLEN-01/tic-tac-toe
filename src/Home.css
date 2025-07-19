@@ -1,6 +1,14 @@
 /* Import Google Font */
 @import url("https://fonts.googleapis.com/css?family=Annie+Use+Your+Telescope:400");
 
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background: linear-gradient(to right, #6366f1, #8b5cf6); /* match your theme */
+  height: 100%;
+}
+
 /* Custom CSS Variables */
 :root {
   --m-3syslightprimary: rgba(103, 80, 164, 1);

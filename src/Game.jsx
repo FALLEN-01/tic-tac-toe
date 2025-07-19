@@ -467,6 +467,8 @@ export default function Game() {
     );
   }
 
+// Replace this section at the end of your Game component's return statement:
+
   // Show game setup
   return (
     <div className="container">
@@ -563,7 +565,6 @@ export default function Game() {
                 value={currentDifficulty}
                 onChange={(e) => {
                   const sliderValue = Number(e.target.value);
-                  const depthMapping = [0, 1, 3, 5, 7, 9]; // index 0 unused, positions 1-5 map to depths
                   setCurrentDifficulty(sliderValue);
                 }}
                 className="slider-input"
@@ -582,16 +583,21 @@ export default function Game() {
             </div>
           </div>
         )}
+
+        {/* Action Buttons - Moved inside main-card */}
+        <div className="setup-buttons">
+          <button className="back-button" onClick={goBack}>
+            ← BACK
+          </button>
+          <button 
+            className={`start-button ${!selectedOpponent ? 'disabled' : ''}`}
+            onClick={startGame}
+            disabled={!selectedOpponent}
+          >
+            START GAME →
+          </button>
+        </div>
       </div>
-      {/* Action Buttons */}
-        <button className="back-button" onClick={goBack}>← BACK</button>
-        <button 
-          className={`start-button ${!selectedOpponent ? 'disabled' : ''}`}
-          onClick={startGame}
-          disabled={!selectedOpponent}
-        >
-          START GAME →
-        </button>
     </div>
   );
 }
