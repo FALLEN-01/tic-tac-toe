@@ -402,7 +402,7 @@ export default function Game() {
               {board.map((cell, index) => (
                 <button
                   key={index}
-                  className={`cell ${winningCells.includes(index) ? 'winning' : ''} ${isAiTurn || isProcessingMove ? 'ai-thinking' : ''}`}
+                  className={`cell ${winningCells.includes(index) ? 'winning' : ''} ${selectedOpponent==='ai' && isAiTurn || isProcessingMove ? 'ai-thinking' : ''}`}
                   onClick={() => handleCellClick(index)}
                   disabled={cell !== '' || gameStatus !== 'playing' || isAiTurn || isProcessingMove}
                 >
