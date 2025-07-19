@@ -584,14 +584,16 @@ export default function Game() {
         )}
 
         {/* Action Buttons */}
-        <button className="back-button" onClick={goBack}>← BACK</button>
-        <button 
-          className={`start-button ${!selectedOpponent ? 'disabled' : ''}`}
-          onClick={startGame}
-          disabled={!selectedOpponent}
-        >
-          START GAME →
-        </button>
+        <div className="button-row">
+          <button className="back-button" onClick={goBack}>← BACK</button>
+          <button 
+            className={`start-button ${!selectedOpponent ? 'disabled' : ''}`}
+            onClick={startGame}
+            disabled={!selectedOpponent}
+          >
+            START GAME →
+          </button>
+        </div>
       </div>
     </div>
   );
