@@ -582,8 +582,8 @@ export default function Game() {
             </div>
           </div>
         )}
-
-        {/* Action Buttons */}
+      </div>
+      {/* Action Buttons */}
         <button className="back-button" onClick={goBack}>← BACK</button>
         <button 
           className={`start-button ${!selectedOpponent ? 'disabled' : ''}`}
@@ -592,7 +592,6 @@ export default function Game() {
         >
           START GAME →
         </button>
-      </div>
     </div>
   );
 }
