@@ -159,8 +159,10 @@ export default function Game() {
       }, 500);
     }
     else if (gameMode==='local'){
+      makeLocalMove(index);
+      setIsProcessingMove(true);
       setTimeout(()=>{
-        makeLocalMove(index);
+        setIsProcessingMove(false);
       }, 500);
     }
   };
