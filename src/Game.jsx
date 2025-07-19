@@ -402,18 +402,28 @@ export default function Game() {
               {board.map((cell, index) => (
                 <button
                   key={index}
-                  className={`cell ${winningCells.includes(index) ? 'winning' : ''} ${selectedOpponent==='ai' && isAiTurn || isProcessingMove ? 'ai-thinking' : ''}`}
+                  className={`cell ${
+                    winningCells.includes(index) ? 'winning' : ''
+                  } ${
+                    selectedOpponent === 'ai' && (isAiTurn || isProcessingMove)
+                      ? 'ai-thinking'
+                      : ''
+                  }`}
                   onClick={() => handleCellClick(index)}
-                  disabled={cell !== '' || gameStatus !== 'playing' || isAiTurn || isProcessingMove}
+                  disabled={
+                    cell !== '' ||
+                    gameStatus !== 'playing' ||
+                    isAiTurn ||
+                    isProcessingMove
+                  }
                 >
-                  {cell && (
-                    <span className={cell.toLowerCase()}>
-                      {cell}
-                    </span>
-                  )}
-                  {selectOpponent==='ai' && (isAiTurn || isProcessingMove) && cell === '' && (
-                    <div className="thinking-indicator">⏳</div>
-                  )}
+                  {cell && <span className={cell.toLowerCase()}>{cell}</span>}
+
+                  {selectedOpponent === 'ai' &&
+                    (isAiTurn || isProcessingMove) &&
+                    cell === '' && (
+                      <div className="thinking-indicator">⏳</div>
+                    )}
                 </button>
               ))}
             </div>
